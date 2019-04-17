@@ -14,4 +14,4 @@ exclude:
 - README.md
 - LICENSE.md
 
-theme: jekyll-theme-merlot
+theme: jekyll-theme-hacker
