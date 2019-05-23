@@ -3,7 +3,7 @@ import constants as c
 def spawnMob(numMobs, mobType):
   spawnXML = ""
   for i in range(numMobs):
-    spawnXML = spawnXML + "<DrawEntity x=\"5\" y=\"4\" z=\"15\" type=\"" + mobType + "\"/>"
+    spawnXML = spawnXML + "<DrawEntity x=\"5\" y=\"5\" z=\"15\" type=\"" + mobType + "\"/>"
   return spawnXML
 
 def getMissionXML():
@@ -32,8 +32,8 @@ def getMissionXML():
             <ServerHandlers>
                 ''' + c.WORLD_GENERATOR + '''
                 <DrawingDecorator>             
-                <DrawCuboid x1="0" y1="3" z1="0" x2="36" y2="21" z2="36" type="barrier"/>
-                <DrawCuboid x1="1" y1="4" z1="1" x2="35" y2="20" z2="35" type="air"/>
+                <DrawCuboid x1="0" y1="4" z1="0" x2="36" y2="22" z2="36" type="barrier"/>
+                <DrawCuboid x1="1" y1="5" z1="1" x2="35" y2="21" z2="35" type="air"/>
                 ''' + spawnMob(1, c.MOB_TYPE) + '''
                 </DrawingDecorator>
                 <ServerQuitFromTimeUp timeLimitMs="30000"/>
