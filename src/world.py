@@ -52,6 +52,9 @@ missionXML='''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
                 <AgentHandlers>
                   <ContinuousMovementCommands turnSpeedDegs="180"/>
                   <InventoryCommands/>
+                  <ObservationFromNearbyEntities>
+                    <Range name="entities" xrange="100" yrange="2" zrange="100" />
+                  </ObservationFromNearbyEntities>
                   <AbsoluteMovementCommands/>
                 </AgentHandlers>
               </AgentSection>
