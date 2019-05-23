@@ -53,7 +53,6 @@ def getMissionXML():
             <AgentHandlers>
                 <ContinuousMovementCommands turnSpeedDegs="180"/>
                 <InventoryCommands/>
-                <AbsoluteMovementCommands/>
                 <ObservationFromFullStats/>
                 <ObservationFromNearbyEntities>
                     <Range name="entities" xrange="''' + str(c.ARENA_WIDTH) + ''' " yrange="3" zrange=" ''' + str(c.ARENA_BREADTH) + ''' " />
