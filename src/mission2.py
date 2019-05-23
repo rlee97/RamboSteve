@@ -81,7 +81,7 @@ def mission():
     action_space = ActionSpace(moves)
 
     agent.sendCommand('chat /give @p diamond_sword 1 0 {ench:[{id:16,lvl:1000}]}')
-    #agent.sendCommand('hotbar.1 1')
+    agent.sendCommand('hotbar.4 1')
     #agent.sendCommand('hotbar.1 0')
     agent.sendCommand('moveMouse 0 -75')
 
@@ -89,9 +89,8 @@ def mission():
         time.sleep(c.AGENT_TICK_RATE / 1000)
         world_state = agent.getWorldState()
 
-        action = action_space.sample()
-        agent.sendCommand('attack 1')
-        
+        agent.sendCommand(action_space.sample())
+    
         #print(world_state.number_of_observations_since_last_state)
         if world_state.number_of_observations_since_last_state > 0:
             msg = world_state.observations[-1].text
@@ -101,7 +100,7 @@ def mission():
         
 
 if __name__ == '__main__':
-    NUM_REPEATS = 100
+    NUM_REPEATS = 10
 
     for iRepeat in range(NUM_REPEATS):
         print('Running episode {}:'.format(iRepeat))
