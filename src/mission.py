@@ -13,7 +13,7 @@ try:
 except ImportError:
     import malmo.MalmoPython as MalmoPython
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(file), os.path.pardir)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
 agent_host = MalmoPython.AgentHost()
 try:
