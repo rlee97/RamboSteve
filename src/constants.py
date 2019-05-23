@@ -11,3 +11,4 @@ WORLD_GENERATOR = '<FlatWorldGenerator generatorString="3;7,3,2,30*169;1;village
 
 # Mission constants
 MS_PER_TICK = 50
+NUM_REPEATS = 10
