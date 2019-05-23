@@ -36,7 +36,7 @@ def getMissionXML():
                 <DrawCuboid x1="1" y1="5" z1="1" x2="35" y2="21" z2="35" type="air"/>
                 ''' + spawnMob(1, c.MOB_TYPE) + '''
                 </DrawingDecorator>
-                <ServerQuitFromTimeUp timeLimitMs="30000"/>
+                <ServerQuitFromTimeUp timeLimitMs="180000"/>
                 <ServerQuitWhenAnyAgentFinishes/>
             </ServerHandlers>
             </ServerSection>
@@ -52,7 +52,6 @@ def getMissionXML():
                 ''' + c.AGENT_START + '''
             </AgentStart>
             <AgentHandlers>
-                <ContinuousMovementCommands turnSpeedDegs="180"/>
                 <InventoryCommands/>
                 <ObservationFromFullStats/>
                 <ObservationFromNearbyEntities>

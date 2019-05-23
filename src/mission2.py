@@ -89,10 +89,8 @@ def mission():
         time.sleep(c.AGENT_TICK_RATE / 1000)
         world_state = agent.getWorldState()
 
-        action = action_space.sample()
+        agent.sendCommand(action_space.sample())
     
-        agent.sendCommand('attack 1')
-
         #print(world_state.number_of_observations_since_last_state)
         if world_state.number_of_observations_since_last_state > 0:
             msg = world_state.observations[-1].text
