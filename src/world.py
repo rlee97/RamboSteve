@@ -3,7 +3,7 @@ import constants as c
 def spawnMob(numMobs, mobType):
   spawnXML = ""
   for i in range(numMobs):
-    spawnXML = spawnXML + "<DrawEntity x=\"5\" y=\"4\" z=\"5\" type=\"" + mobType + "\"/>"
+    spawnXML = spawnXML + "<DrawEntity x=\"5\" y=\"4\" z=\"15\" type=\"" + mobType + "\"/>"
   return spawnXML
 
 missionXML='''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
@@ -20,7 +20,7 @@ missionXML='''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 
               <ServerSection>
                 <ServerInitialConditions>
-                <AllowSpawning>true</AllowSpawning>
+                <AllowSpawning>false</AllowSpawning>
                 <AllowedMobs>Zombie</AllowedMobs>              
                 <Time>                    
                   <StartTime>12000</StartTime>                    
@@ -50,7 +50,9 @@ missionXML='''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
                   ''' + c.AGENT_START + '''
                 </AgentStart>
                 <AgentHandlers>
-                  <ObservationFromFullStats/>
+                  <ContinuousMovementCommands turnSpeedDegs="180"/>
+                  <InventoryCommands/>
+                  <AbsoluteMovementCommands/>
                 </AgentHandlers>
               </AgentSection>
             </Mission>'''

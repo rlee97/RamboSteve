@@ -1,5 +1,6 @@
 from builtins import range
-import MalmoPython
+import sys
+import os.path
 import os
 import sys
 import time
@@ -7,7 +8,12 @@ import constants as c
 import random
 import world
 
-# Create default Malmo objects:
+try:
+    import MalmoPython
+except ImportError:
+    import malmo.MalmoPython as MalmoPython
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(file), os.path.pardir)))
 
 agent_host = MalmoPython.AgentHost()
 try:
@@ -48,6 +54,8 @@ while not world_state.has_mission_begun:
 
 print()
 print("Mission running ", end=' ')
+
+agent_host.sendCommand("jump 1")
 
 # Loop until mission ends:
 while world_state.is_mission_running:
