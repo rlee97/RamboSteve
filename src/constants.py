@@ -18,3 +18,4 @@ MOB_TYPE = 'Zombie'
 
 # Environment Mode: Creative or Survival
 ENV_MODE = 'Creative'
+NUM_REPEATS = 10
