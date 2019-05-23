@@ -32,6 +32,7 @@ def getMissionXML():
             <ServerHandlers>
                 ''' + c.WORLD_GENERATOR + '''
                 <DrawingDecorator>             
+                <DrawCuboid x1="0" y1="3" z1="0" x2="36" y2="21" z2="36" type="barrier"/>
                 <DrawCuboid x1="1" y1="4" z1="1" x2="35" y2="20" z2="35" type="air"/>
                 ''' + spawnMob(1, c.MOB_TYPE) + '''
                 </DrawingDecorator>
