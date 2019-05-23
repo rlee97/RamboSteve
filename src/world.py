@@ -32,7 +32,7 @@ missionXML='''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
                   ''' + c.WORLD_GENERATOR + '''
                   <DrawingDecorator>             
                     <DrawCuboid x1="1" y1="4" z1="1" x2="35" y2="20" z2="35" type="air"/>
-                    ''' + spawnMob(1, "Zombie") + '''
+                    ''' + spawnMob(1, c.MOB_TYPE) + '''
                   </DrawingDecorator>
                   <ServerQuitFromTimeUp timeLimitMs="30000"/>
                   <ServerQuitWhenAnyAgentFinishes/>

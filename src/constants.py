@@ -11,3 +11,10 @@ WORLD_GENERATOR = '<FlatWorldGenerator generatorString="3;7,3,2,30*169;1;village
 
 # Mission constants
 MS_PER_TICK = 50
+AGENT_TICK_RATE = int(2.5 * MS_PER_TICK)
+
+# Mob Type
+MOB_TYPE = 'Zombie'
+
+# Environment Mode: Creative or Survival
+ENV_MODE = 'Creative'
