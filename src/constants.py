@@ -17,5 +17,9 @@ AGENT_TICK_RATE = int(2.5 * MS_PER_TICK)
 MOB_TYPE = 'Zombie'
 
 # Environment Mode: Creative or Survival
-ENV_MODE = 'Creative'
+ENV_MODE = 'Survival'
 NUM_REPEATS = 10
+
+# Arena
+ARENA_WIDTH = 34
+ARENA_BREADTH = 34
