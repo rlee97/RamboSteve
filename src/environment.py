@@ -59,6 +59,10 @@ def getMissionXML():
                 </ObservationFromNearbyEntities>
                 </ObservationFromRay/>
                 <HumanLevelCommands/>
+                <RewardForMissionEnd rewardForDeath="-1000.0">
+                    <Reward description="killed_all" reward="0.0"/>
+                    <Reward description="times_up" reward="-100.0"/>
+                </RewardForMissionEnd>
                 <ChatCommands/>
             </AgentHandlers>
             </AgentSection>
