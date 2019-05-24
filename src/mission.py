@@ -16,6 +16,7 @@ def run_mission(agent_host):
     """ Run the Agent on the world """
     agent_host.sendCommand("move 0.25")
     world_state = agent_host.getWorldState()
+    is_start = True
     while world_state.is_mission_running:
         #sys.stdout.write("*")
         time.sleep(0.1)
@@ -30,6 +31,23 @@ def run_mission(agent_host):
             'Pitch', 'MobsKilled', 'XP']
             '''
             print(ob.keys())
+
+            if is_start:
+                damage_dealth = ob["DamageDealt"]
+                damage_taken = ob["DamageTaken"]
+                mobs_killed = ob["MobsKilled"]
+                is_start = False
+
+            dmg_dealth = ob["DamageDealt"] - damage_dealth
+            dmg_taken = ob["DamageTaken"] - damage_taken
+            killed = ob["MobsKilled"] - mobs_killed
+            # checking if we killed the enemy or not
+            entity_count = 0
+            for entity in ob["entities"]:
+                if entity["name"] in c.MOB_TYPE:
+                    entity_count += 1
+            if entity_count == 0:
+                agent_host.sendCommand("quit")
 
             xPos = ob['XPos']
             yPos = ob['YPos']
