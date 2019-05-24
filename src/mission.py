@@ -55,7 +55,7 @@ def run_mission(agent_host):
             yaw = ob['Yaw']
             target = getNextTarget(ob['entities'])
             print(ob['entities'])
-            if target == None or target['name'] != "Zombie": # No enemies nearby
+            if target == None or target['name'] != c.MOB_TYPE: # No enemies nearby
                 if target != None:
                     sys.stdout.write("Not found: "+target['name'] + "\n")
                 agent_host.sendCommand("move 0") # stop moving
