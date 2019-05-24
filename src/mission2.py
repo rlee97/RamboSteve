@@ -1,106 +1,171 @@
-import time
+from builtins import range
+import sys
+import os.path
 import os
 import sys
 import time
-import json
 import constants as c
 import random
-import tkinter as tk
-#import canvas as cnv
-import environment 
-from action_space import ActionSpace
+import world
+import json
+import math
+import random
 
-try:
-    import MalmoPython
-except ImportError:
-    import malmo.MalmoPython as MalmoPython
+import MalmoPython
 
+def atk_wit_sword(agent_host, target, xPos, yPos, zPos, yaw):
+    agent_host.sendCommand("hotbar.1 1")
+    if target == None or target['name'] != c.MOB_TYPE: # No enemies nearby
+        if target != None:
+            sys.stdout.write("Not found: "+target['name'] + "\n")
+        agent_host.sendCommand("move 0") # stop moving
+        agent_host.sendCommand("attack 0") # stop attacking
+        time.sleep(1)
+        agent_host.sendCommand("turn 0") # stop turning
+    else:# enemy nearby, kill kill kill
+        deltaYaw = calcYawPitch(target['name'], target['x'], target['y'], target['z'], yaw, xPos, yPos, zPos)
+        # And turn:
+        agent_host.sendCommand("turn " + str(deltaYaw))
+        time.sleep(1)
+        agent_host.sendCommand("attack 1")
 
+def atk_wit_bow(agent_host, target, xPos, yPos, zPos, yaw):
+    agent_host.sendCommand("hotbar.2 1")
+    if target == None or target['name'] != c.MOB_TYPE: # No enemies nearby
+        if target != None:
+            sys.stdout.write("Not found: "+target['name'] + "\n")
+        agent_host.sendCommand("use 1") # stop moving
+        time.sleep(1)
+        agent_host.sendCommand("use 0")
+        agent_host.sendCommand("turn 0") # stop turning
+    else:# enemy nearby, kill kill kill
+        deltaYaw = calcYawPitch(target['name'], target['x'], target['y'], target['z'], yaw, xPos, yPos, zPos)
+        # And turn:
+        agent_host.sendCommand("turn " + str(deltaYaw))
+        agent_host.sendCommand("use 1") # stop moving
+        time.sleep(1)
+        agent_host.sendCommand("use 0")
 
-def getPlayerState(observed):
-    is_alive = observed['IsAlive']
-    life = observed['Life']
-    xpos = observed['XPos']
-    ypos = observed['YPos']
-    zpos = observed['ZPos']
-    pitch = observed['Pitch']
-    yaw = observed['Yaw']
+def run_mission(agent_host):
+    """ Run the Agent on the world """
+    agent_host.sendCommand("move 0.25")
+    world_state = agent_host.getWorldState()
+    is_start = True
+    # implementing a funct array
+    my_attacks = [atk_wit_sword, atk_wit_bow]
+    while world_state.is_mission_running:
+        #sys.stdout.write("*")
+        time.sleep(0.1)
+        world_state = agent_host.getWorldState()
+        if world_state.number_of_observations_since_last_state > 0:
+            msg = world_state.observations[-1].text
+            ob = json.loads(msg)
+            '''Obs has the following keys:
+            ['PlayersKilled', 'TotalTime', 'Life', 'ZPos', 'IsAlive',
+            'Name', 'entities', 'DamageTaken', 'Food', 'Yaw', 'TimeAlive',
+            'XPos', 'WorldTime', 'Air', 'DistanceTravelled', 'Score', 'YPos',
+            'Pitch', 'MobsKilled', 'XP']
+            '''
+            print(ob.keys())
 
-    return (is_alive, life, xpos, ypos, zpos, pitch, yaw)
+            if is_start:
+                damage_dealth = ob["DamageDealt"]
+                damage_taken = ob["DamageTaken"]
+                mobs_killed = ob["MobsKilled"]
+                is_start = False
 
+            dmg_dealth = ob["DamageDealt"] - damage_dealth
+            dmg_taken = ob["DamageTaken"] - damage_taken
+            killed = ob["MobsKilled"] - mobs_killed
+            # checking if we killed the enemy or not
+            entity_count = 0
+            for entity in ob["entities"]:
+                if entity["name"] in c.MOB_TYPE:
+                    entity_count += 1
+            if entity_count == 0:
+                agent_host.sendCommand("quit")
 
-def getState(observed):
-    damage_dealt = observed['DamageDealt']
-    damage_taken = observed['DamageTaken']
-    mobs_killed = observed['MobsKilled']
+            xPos = ob['XPos']
+            yPos = ob['YPos']
+            zPos = ob['ZPos']
+            yaw = ob['Yaw']
+            target = getNextTarget(ob['entities'])
+            print(ob['entities'])
+            random.choice(my_attacks)(agent_host, target, xPos, yPos, zPos, yaw)
+            
 
-    return (mobs_killed, damage_dealt, damage_taken)
+        for error in world_state.errors:
+            print("Error:", error.text)
 
-def mission(Q, rList):
-    agent = MalmoPython.AgentHost()
+def getNextTarget(entities):
+    for entity in entities:
+        if entity['name'] != " RamboSteve ":
+            return entity
+
+def calcYawPitch(name, ex, ey, ez, selfyaw, x, y, z): #Adapted from cart_test.py
+    ''' Find the mob we are following, and calculate the yaw we need in order to face it '''
+    dx = ex - x
+    dz = ez - z
+    dy = (ey+1.95/2) - (y+1.8) #calculate height difference between our eye level and center of mass for entity
+    #-- calculate deltaYaw
+    yaw = -180 * math.atan2(dx, dz) / math.pi
+    deltaYaw = yaw - selfyaw
+    while deltaYaw < -180:
+        deltaYaw += 360
+    while deltaYaw > 180:
+        deltaYaw -= 360
+    deltaYaw /= 180.0
+    return deltaYaw
+
+def mission():
+    agent_host = MalmoPython.AgentHost()
 
     try:
-        agent.parse( sys.argv )
+        agent_host.parse( sys.argv )
     except RuntimeError as e:
         print('ERROR:',e)
-        print(agent.getUsage())
+        print(agent_host.getUsage())
         exit(1)
-    if agent.receivedArgument('help'):
-        print(agent.getUsage())
+    if agent_host.receivedArgument("help"):
+        print(agent_host.getUsage())
         exit(0)
 
-    my_mission = MalmoPython.MissionSpec(environment.getMissionXML(), True)
+    my_mission = MalmoPython.MissionSpec(world.missionXML, True)
     my_mission_record = MalmoPython.MissionRecordSpec()
 
     # Attempt to start a mission:
-    MAX_RETRIES = 10
-    for retry in range(MAX_RETRIES):
+    max_retries = 3
+    for retry in range(max_retries):
         try:
-            agent.startMission(my_mission, my_mission_record)
+            agent_host.startMission( my_mission, my_mission_record )
             break
         except RuntimeError as e:
-            if retry == MAX_RETRIES - 1:
-                print('Error starting mission: {}'.format(e))
+            if retry == max_retries - 1:
+                print("Error starting mission:",e)
                 exit(1)
             else:
                 time.sleep(2)
 
-     # Loop until mission starts:
-    print('Waiting for the mission to start ', end=' ')
-    world_state = agent.getWorldState()
+    # Loop until mission starts:
+    print("Waiting for the mission to start ", end=' ')
+    world_state = agent_host.getWorldState()
     while not world_state.has_mission_begun:
-        print('.', end='')
+        print(".", end="")
         time.sleep(0.1)
-        world_state = agent.getWorldState()
+        world_state = agent_host.getWorldState()
         for error in world_state.errors:
-            print('Error: {}'.format(error.text))
+            print("Error:",error.text)
 
-    print('Mission running!')
+    print()
+    print("Mission running ", end=' ')
 
-    # agent.sendCommand('chat /give @p diamond_sword 1 0 {ench:[{id:16,lvl:1000}]}')
-    # #agent.sendCommand('hotbar.1 1')
-    # #agent.sendCommand('hotbar.1 0')
-    # agent.sendCommand('moveMouse 0 -75')
+    run_mission(agent_host)
 
-    while world_state.is_mission_running:
-        time.sleep(c.AGENT_TICK_RATE / 1000)
-        world_state = agent.getWorldState()
-
-        a = action_space.sample()
-        
-        #print(world_state.number_of_observations_since_last_state)
-        if world_state.number_of_observations_since_last_state > 0:
-            msg = world_state.observations[-1].text
-            ob = json.loads(msg)
-            print(ob)
-
-        
+    print()
+    print("Mission ended")
+    time.sleep(2)
+    # Mission has ended.
 
 if __name__ == '__main__':
-    NUM_REPEATS = 100
-
-    for iRepeat in range(NUM_REPEATS):
-        print('Running episode {}:'.format(iRepeat))
+    for i in range(c.NUM_REPEATS):
         mission()
-        # Mission has ended.
-        print('Mission {} has ended.'.format(iRepeat))
