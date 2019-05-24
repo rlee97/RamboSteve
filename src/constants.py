@@ -3,7 +3,7 @@
 '''
 
 # Agent constants
-AGENT_NAME = "Rambo Steve"
+AGENT_NAME = "RamboSteve"
 AGENT_START = '<Placement x="15" y="5" z="15" yaw="90"/>'
 
 # World Constants

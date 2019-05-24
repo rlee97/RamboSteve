@@ -30,13 +30,13 @@ def getPlayerState(observed):
 
 
 def getState(observed):
-    damage_dealth = observed['DamageDealt']
+    damage_dealt = observed['DamageDealt']
     damage_taken = observed['DamageTaken']
     mobs_killed = observed['MobsKilled']
 
-    return (mobs_killed, damage_dealth, damage_taken)
+    return (mobs_killed, damage_dealt, damage_taken)
 
-def mission():
+def mission(Q, rList):
     agent = MalmoPython.AgentHost()
 
     try:
@@ -77,20 +77,17 @@ def mission():
 
     print('Mission running!')
 
-    moves = []
-    action_space = ActionSpace(moves)
-
-    agent.sendCommand('chat /give @p diamond_sword 1 0 {ench:[{id:16,lvl:1000}]}')
-    agent.sendCommand('hotbar.4 1')
-    #agent.sendCommand('hotbar.1 0')
-    agent.sendCommand('moveMouse 0 -75')
+    # agent.sendCommand('chat /give @p diamond_sword 1 0 {ench:[{id:16,lvl:1000}]}')
+    # #agent.sendCommand('hotbar.1 1')
+    # #agent.sendCommand('hotbar.1 0')
+    # agent.sendCommand('moveMouse 0 -75')
 
     while world_state.is_mission_running:
         time.sleep(c.AGENT_TICK_RATE / 1000)
         world_state = agent.getWorldState()
 
-        agent.sendCommand(action_space.sample())
-    
+        a = action_space.sample()
+        
         #print(world_state.number_of_observations_since_last_state)
         if world_state.number_of_observations_since_last_state > 0:
             msg = world_state.observations[-1].text
@@ -100,11 +97,10 @@ def mission():
         
 
 if __name__ == '__main__':
-    NUM_REPEATS = 10
+    NUM_REPEATS = 100
 
     for iRepeat in range(NUM_REPEATS):
         print('Running episode {}:'.format(iRepeat))
         mission()
-        print()
         # Mission has ended.
         print('Mission {} has ended.'.format(iRepeat))

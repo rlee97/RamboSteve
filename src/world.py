@@ -32,7 +32,7 @@ missionXML='''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
                   ''' + c.WORLD_GENERATOR + '''
                   <DrawingDecorator>             
                     <DrawCuboid x1="1" y1="4" z1="1" x2="35" y2="20" z2="35" type="air"/>
-                    ''' + spawnMob(1, c.MOB_TYPE) + '''
+                    ''' + spawnMob(1, "Zombie") + '''
                   </DrawingDecorator>
                   <ServerQuitFromTimeUp timeLimitMs="30000"/>
                   <ServerQuitWhenAnyAgentFinishes/>
@@ -50,12 +50,25 @@ missionXML='''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
                   ''' + c.AGENT_START + '''
                 </AgentStart>
                 <AgentHandlers>
-                  <ContinuousMovementCommands turnSpeedDegs="180"/>
-                  <InventoryCommands/>
+                  <MissionQuitCommands
+                    quitDescription="finished murdering">
+                      <ModifierList
+                        type='allow-list'>
+                          <command>quit</command>
+                      </ModifierList>
+                  </MissionQuitCommands>
+                  <ObservationFromFullStats/>
+                  <AgentQuitFromTimeUp timeLimitMs="'''+str(25000)+'''" description="out_of_time"/>
+                  <ContinuousMovementCommands turnSpeedDegs="900"/>
+                  <InventoryCommands>
+                    <ModifierList type = "deny-list">
+                        <command>discardCurrentItem</command>
+                    </ModifierList>
+                  </InventoryCommands>
                   <ObservationFromNearbyEntities>
-                    <Range name="entities" xrange="100" yrange="2" zrange="100" />
+                    <Range name="entities" xrange="'''+str(35)+'''" yrange="'''+str(35)+'''" zrange="'''+str(35)+'''" />
                   </ObservationFromNearbyEntities>
-                  <AbsoluteMovementCommands/>
+                  <ObservationFromHotBar/>
                 </AgentHandlers>
               </AgentSection>
             </Mission>'''

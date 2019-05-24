@@ -7,16 +7,74 @@ import time
 import constants as c
 import random
 import world
+import json
+import math
 
-try:
-    import MalmoPython
-except ImportError:
-    import malmo.MalmoPython as MalmoPython
+import MalmoPython
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+def run_mission(agent_host):
+    """ Run the Agent on the world """
+    agent_host.sendCommand("move 0.25")
+    world_state = agent_host.getWorldState()
+    while world_state.is_mission_running:
+        #sys.stdout.write("*")
+        time.sleep(0.1)
+        world_state = agent_host.getWorldState()
+        if world_state.number_of_observations_since_last_state > 0:
+            msg = world_state.observations[-1].text
+            ob = json.loads(msg)
+            '''Obs has the following keys:
+            ['PlayersKilled', 'TotalTime', 'Life', 'ZPos', 'IsAlive',
+            'Name', 'entities', 'DamageTaken', 'Food', 'Yaw', 'TimeAlive',
+            'XPos', 'WorldTime', 'Air', 'DistanceTravelled', 'Score', 'YPos',
+            'Pitch', 'MobsKilled', 'XP']
+            '''
+            print(ob.keys())
+
+            xPos = ob['XPos']
+            yPos = ob['YPos']
+            zPos = ob['ZPos']
+            yaw = ob['Yaw']
+            target = getNextTarget(ob['entities'])
+            print(ob['entities'])
+            if target == None or target['name'] != "Zombie": # No enemies nearby
+                if target != None:
+                    sys.stdout.write("Not found: "+target['name'] + "\n")
+                agent_host.sendCommand("move 0") # stop moving
+                agent_host.sendCommand("attack 0") # stop attacking
+                agent_host.sendCommand("turn 0") # stop turning
+            else:# enemy nearby, kill kill kill
+                deltaYaw = calcYawPitch(target['name'], target['x'], target['y'], target['z'], yaw, xPos, yPos, zPos)
+                # And turn:
+                agent_host.sendCommand("turn " + str(deltaYaw))
+                agent_host.sendCommand("attack 1")
+
+        for error in world_state.errors:
+            print("Error:", error.text)
+
+def getNextTarget(entities):
+    for entity in entities:
+        if entity['name'] != " RamboSteve ":
+            return entity
+
+def calcYawPitch(name, ex, ey, ez, selfyaw, x, y, z): #Adapted from cart_test.py
+    ''' Find the mob we are following, and calculate the yaw we need in order to face it '''
+    dx = ex - x
+    dz = ez - z
+    dy = (ey+1.95/2) - (y+1.8) #calculate height difference between our eye level and center of mass for entity
+    #-- calculate deltaYaw
+    yaw = -180 * math.atan2(dx, dz) / math.pi
+    deltaYaw = yaw - selfyaw
+    while deltaYaw < -180:
+        deltaYaw += 360
+    while deltaYaw > 180:
+        deltaYaw -= 360
+    deltaYaw /= 180.0
+    return deltaYaw
 
 def mission():
     agent_host = MalmoPython.AgentHost()
+
     try:
         agent_host.parse( sys.argv )
     except RuntimeError as e:
@@ -56,17 +114,11 @@ def mission():
     print()
     print("Mission running ", end=' ')
 
-    # Loop until mission ends:
-    while world_state.is_mission_running:
-        agent_host.sendCommand("attack 1")
-        print(".", end="")
-        time.sleep(0.1)
-        world_state = agent_host.getWorldState()
-        for error in world_state.errors:
-            print("Error:",error.text)
+    run_mission(agent_host)
 
     print()
     print("Mission ended")
+    time.sleep(2)
     # Mission has ended.
 
 if __name__ == '__main__':
