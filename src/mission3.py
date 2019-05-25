@@ -12,6 +12,8 @@ import math
 
 import MalmoPython
 
+recordedFileName = os.getcwd() + "/Recordings/recording_bow.tgz"
+
 def run_mission(agent_host):
     """ Run the Agent on the world """
     agent_host.sendCommand("move 0.25")
@@ -107,6 +109,16 @@ def mission():
         print(agent_host.getUsage())
         exit(0)
 
+    my_mission = MalmoPython.MissionSpec(world.missionXML, True)
+    # adding the recordedFileName into MissionRecordSpec
+    my_mission_record = MalmoPython.MissionRecordSpec(recordedFileName)
+    # adding the spec for adding the recording of the video
+    my_mission.requestVideo(1200, 720)
+    my_mission_record.recordMP4(30, 2000000)
+
+    #set up client to connect:
+    my_clients = MalmoPython.ClientPool()
+    my_clients.add(MalmoPython.ClientInfo('127.0.0.1', 10000))    
     my_mission = MalmoPython.MissionSpec(world.missionXML, True)
     my_mission_record = MalmoPython.MissionRecordSpec()
 

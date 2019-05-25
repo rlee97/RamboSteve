@@ -13,6 +13,9 @@ import random
 
 import MalmoPython
 
+recordedFileName = os.getcwd() + "/Recordings/recording_sword_bow.tgz"
+print("Recorded FileName", recordedFileName)
+
 def atk_wit_sword(agent_host, target, xPos, yPos, zPos, yaw):
     agent_host.sendCommand("hotbar.1 1")
     if target == None or target['name'] != c.MOB_TYPE: # No enemies nearby
@@ -66,7 +69,8 @@ def run_mission(agent_host):
             'XPos', 'WorldTime', 'Air', 'DistanceTravelled', 'Score', 'YPos',
             'Pitch', 'MobsKilled', 'XP']
             '''
-            print(ob.keys())
+            # \
+            # print(ob.keys())
 
             if is_start:
                 damage_dealth = ob["DamageDealt"]
@@ -91,8 +95,8 @@ def run_mission(agent_host):
             yaw = ob['Yaw']
             target = getNextTarget(ob['entities'])
             print(ob['entities'])
+            print(ob)
             random.choice(my_attacks)(agent_host, target, xPos, yPos, zPos, yaw)
-            
 
         for error in world_state.errors:
             print("Error:", error.text)
@@ -131,13 +135,22 @@ def mission():
         exit(0)
 
     my_mission = MalmoPython.MissionSpec(world.missionXML, True)
-    my_mission_record = MalmoPython.MissionRecordSpec()
+    # adding the recordedFileName into MissionRecordSpec
+    my_mission_record = MalmoPython.MissionRecordSpec(recordedFileName)
+    # adding the spec for adding the recording of the video
+    my_mission.requestVideo(1200, 720)
+    my_mission_record.recordMP4(30, 2000000)
+
+    #set up client to connect:
+    my_clients = MalmoPython.ClientPool()
+    my_clients.add(MalmoPython.ClientInfo('127.0.0.1', 10000))
 
     # Attempt to start a mission:
     max_retries = 3
     for retry in range(max_retries):
         try:
-            agent_host.startMission( my_mission, my_mission_record )
+            # pass info to agent, to record data as well as video from run:
+            agent_host.startMission(my_mission, my_mission_record)
             break
         except RuntimeError as e:
             if retry == max_retries - 1:
