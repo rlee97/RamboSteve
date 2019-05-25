@@ -69,6 +69,8 @@ def run_mission(agent_host):
                 deltaYaw = calcYawPitch(target['name'], target['x'], target['y'], target['z'], yaw, xPos, yPos, zPos)
                 # And turn:
                 agent_host.sendCommand("turn " + str(deltaYaw))
+                time.sleep(0.1)
+                agent_host.sendCommand("turn 0")
                 agent_host.sendCommand("use 1") # stop moving
                 time.sleep(1)
                 agent_host.sendCommand("use 0")
