@@ -8,6 +8,4 @@ The goal of our project is to create a Malmo agent that learns to fight enemies 
 
 Our baseline for this project was to make a basic bot that will aim at the enemy and see if it can kill it in the basic way. A video of this is shown below. 
 
-(UPDATE VIDEO OVER HERE)
-
-![alt text](https://github.com/rlee97/RamboSteve/tree/master/docs/assets/videos/base_bow_recording.mp4)
+[![](http://img.youtube.com/vi/uM0Vs73V5_c/0.jpg)](http://www.youtube.com/watch?v=uM0Vs73V5_c "base bow recording")
