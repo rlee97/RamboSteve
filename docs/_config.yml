@@ -3,7 +3,7 @@
 
 title:    'RamboSteve'
 subtitle: 'CS 175: Project in AI (in Minecraft)'
-
+baseurl: 'blog'
 
 #########################
 # more settings
@@ -15,3 +15,6 @@ exclude:
 - LICENSE.md
 
 theme: jekyll-theme-hacker
+
+plugins:
+    - jekyll-include-cache
