@@ -10,4 +10,4 @@ Our baseline for this project was to make a basic bot that will aim at the enemy
 
 (UPDATE VIDEO OVER HERE)
 
-![alt text](https://raw.githubusercontent.com/rlee97/RamboSteve/tree/master/docs/assets/videos/base_bow_recording.mp4)
+![alt text](https://github.com/rlee97/RamboSteve/tree/master/docs/assets/videos/base_bow_recording.mp4)
