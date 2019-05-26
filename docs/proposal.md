@@ -6,7 +6,7 @@ title: Proposal
 ## Project Rambo Steve
 
 ## Summary
-Project Rambo Steve aims to create an agent that can efficiently navigate through a maze while fighting enemies. The generated maze will have multiple paths to navigate through, ensuring that the agent will be able to find different paths to all enemies. Each time a mission begins, enemies will be given static spawn points that they will stay around. An enemy will only be given information within 10 blocks around it. If the enemy detects the agent, it will try to attack the agent until either the agent is killed and the mission fails, or until it is killed by the agent. For input, the agent will only be given information within 10 blocks around it. Over time, the agent will learn more about the maze and which actions yield the best path to the goal state.
+Project Rambo Steve aims to create an agent that can efficiently fight each type of enemy. The AI will have two seperate weapons, a bow and a diamond sword. It is up to the AI to determine what set of actions is the best way to eliminate the enemy. 
 
 ## AI/ML Algorithms
 This project will deploy reinforcement learning algorithms such as Q-learning to train the agent to maximize rewards when fighting enemies and clearing the maze.
