@@ -8,6 +8,7 @@ import constants as c
 import world
 import os, sys, random
 import numpy as np
+import pandas as pd
 from collections import defaultdict, deque
 
 # recorded_file_name = os.getcwd() + "test.tgz"
@@ -24,7 +25,7 @@ class RamboSteve():
         self.gamma = gamma
         self.epsilon = epsilon
         self.back_steps = back_steps
-        self.history = []
+        self.history = pd.DataFrame(columns=['episode', 'mob_type', 'damage_dealt', 'health_lost', 'total_time', 'min_reward', 'max_reward','killed_mob'])
         self.weapon = 'sword'
         self.qtable_fname = 'q_table_a{}_g{}_eps{}_n{}.p'.format(self.alpha, self.gamma, self.epsilon, self.back_steps)
         self.results_fname = 'results_a{}_g{}_eps{}_n{}.txt'.format(self.alpha, self.gamma, self.epsilon, self.back_steps)
@@ -121,6 +122,7 @@ class RamboSteve():
 
     def calculate_yaw_to_mob(self, observation, entity):
         """
+        Turns agent to face mob
         """
         x_diff = entity['x'] - observation['XPos']
         z_diff = entity['z'] - observation['ZPos']
@@ -140,6 +142,7 @@ class RamboSteve():
 
     def calculate_pitch_to_mob(self, observation, entity):
         """
+        Changes pitch to look at mob.
         """
         x_diff = entity['x'] - observation['XPos']
         z_diff = entity['z'] - observation['ZPos']
@@ -178,6 +181,9 @@ class RamboSteve():
         self.q_table[curr_s][curr_a] = old_q + self.alpha * (G - old_q)
 
     def track_target(self, observation, entity):
+        """
+        Calculates yaw and pitch to face mob.
+        """
         if not self.agent:
             return
         
@@ -195,6 +201,9 @@ class RamboSteve():
             self.agent.sendCommand('attack 0')
 
     def perform_action(self, action):
+        """
+        Performs action (mainly to target switch commands).
+        """
         if action == 'switch' and self.weapon == 'sword':
             self.agent.sendCommand('hotbar.2 1')
             self.agent.sendCommand('hotbar.2 0')
@@ -220,6 +229,9 @@ class RamboSteve():
             self.agent.sendCommand("move 0")
 
     def run(self, agent_host, episode):
+        """
+        Runs an episode.
+        """
         start_time = time.time()
         self.agent = agent_host
         world_state = self.agent.getWorldState()
@@ -277,9 +289,13 @@ class RamboSteve():
                 health_lost = 0
 
                 if first_loop:
+                    total_agent_health = obs['Life']
+                    total_mob_health = entity['life']
                     agent_health = obs['Life'] 
                     mob_health = entity['life']
                 else:
+                    total_health_lost = total_agent_health - obs['Life']
+                    total_damage_dealt = total_mob_health - entity['life']
                     damage_dealt = mob_health - entity['life']
                     health_lost = agent_health - obs['Life']
                     agent_health = obs['Life'] 
@@ -318,7 +334,17 @@ class RamboSteve():
         print('max_score: {}, min_score: {}'.format(max_score, min_score))
         print('mob: {}, damage_dealt: {}, health_lost: {}, total_time: {}'.format(mob, damage_dealt, health_lost, total_time))
 
-        self.history.append((mob, damage_dealt, health_lost, total_time))
+        # 'episode': episode, 'mob_type': mob, 'damage_dealt': damage_dealt, 'health_lost': health_lost, 'total_time': total_time, 'min_reward': min_score, 'max_reward': max_score, 'killed_mob': mob_dead
+        self.history.append({
+            'episode': episode, 
+            'mob_type': mob, 
+            'total_damage_dealt': total_damage_dealt, 
+            'total_health_lost': total_health_lost, 
+            'total_time': total_time, 
+            'min_reward': min_score, 
+            'max_reward': max_score, 
+            'killed_mob': mob_dead
+        })
 
     def save_q_table(self):
         try:
@@ -329,6 +355,10 @@ class RamboSteve():
         except Exception as e:
             print(e)
 
+    def save_results(self):
+        self.history.to_csv('{}.csv'.format(self.results_fname))
+
+    """
     def save_results(self, append=False):
         try:
             f = open(self.results_fname, 'a+' if append else 'w+')
@@ -341,7 +371,7 @@ class RamboSteve():
             f.close()
         except Exception as e:
             print(e)
-
+    """
 def run_mission(rambo_steve, episode):
     agent_host = MalmoPython.AgentHost()
 
