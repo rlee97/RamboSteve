@@ -5,7 +5,7 @@ def spawnMob(numMobs):
   spawnXML = ""
   for i in range(numMobs):
     print(str(random.choice(list(c.HEIGHT_CHART))))
-    spawnXML = spawnXML + "<DrawEntity x=\"5\" y=\"5\" z=\"15\" type=\"" + str(random.choice(list(c.HEIGHT_CHART))) + "\"/>"
+    spawnXML = spawnXML + "<DrawEntity x=\"10\" y=\"5\" z=\"15\" type=\"" + str(random.choice(list(c.HEIGHT_CHART))) + "\"/>"
     print(spawnXML)
   return spawnXML
 
