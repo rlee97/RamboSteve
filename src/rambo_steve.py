@@ -282,8 +282,8 @@ class RamboSteve():
                 else:
                     damage_dealt = mob_health - entity['life']
                     health_lost = agent_health - obs['Life']
-                    #agent_health = obs['Life'] 
-                    #mob_health = entity['life']
+                    agent_health = obs['Life'] 
+                    mob_health = entity['life']
                 
                 score = self.get_rewards(health_lost, damage_dealt)
                 max_score = max(score, max_score)
