@@ -9,7 +9,7 @@ import os, sys, random
 import numpy as np
 from collections import defaultdict, deque
 
-recorded_file_name = os.getcwd() + "/Recordings/recording_sword.tgz"
+recorded_file_name = os.getcwd() + "test.tgz"
 here = os.path.dirname(os.path.abspath(__file__))
 
 
