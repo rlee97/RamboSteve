@@ -25,7 +25,7 @@ class RamboSteve():
         self.gamma = gamma
         self.epsilon = epsilon
         self.back_steps = back_steps
-        self.history = pd.DataFrame(columns=['episode', 'mob_type', 'damage_dealt', 'health_lost', 'total_time', 'min_reward', 'max_reward','killed_mob'])
+        self.history = pd.DataFrame(columns=['episode', 'mob_type', 'total_damage_dealt', 'total_health_lost', 'total_time', 'min_reward', 'max_reward','killed_mob'])
         self.weapon = 'sword'
         self.qtable_fname = 'q_table_a{}_g{}_eps{}_n{}.p'.format(self.alpha, self.gamma, self.epsilon, self.back_steps)
         self.results_fname = 'results_a{}_g{}_eps{}_n{}.txt'.format(self.alpha, self.gamma, self.epsilon, self.back_steps)
@@ -335,14 +335,15 @@ class RamboSteve():
         print('mob: {}, damage_dealt: {}, health_lost: {}, total_time: {}'.format(mob, damage_dealt, health_lost, total_time))
 
         # 'episode': episode, 'mob_type': mob, 'damage_dealt': damage_dealt, 'health_lost': health_lost, 'total_time': total_time, 'min_reward': min_score, 'max_reward': max_score, 'killed_mob': mob_dead
-        self.history.append({'episode': episode, 
-                             'mob_type': mob, 
-                             'total_damage_dealt': total_damage_dealt, 
-                             'total_health_lost': total_health_lost, 
-                             'total_time': total_time, 
-                             'min_reward': min_score, 
-                             'max_reward': max_score, 
-                             'killed_mob': mob_dead}, ignore_index=True)
+        self.history = self.history.append({'episode': episode, 
+                                            'mob_type': mob, 
+                                            'total_damage_dealt': total_damage_dealt, 
+                                            'total_health_lost': total_health_lost, 
+                                            'total_time': total_time, 
+                                            'min_reward': min_score, 
+                                            'max_reward': max_score, 
+                                            'killed_mob': mob_dead}, ignore_index=True)
+
 
     def save_q_table(self):
         try:
@@ -354,6 +355,7 @@ class RamboSteve():
             print(e)
 
     def save_results(self):
+        print('Saving results into {}'.format(self.results_fname))
         self.history.to_csv('{}.csv'.format(self.results_fname))
 
     """
