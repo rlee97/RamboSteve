@@ -43,3 +43,5 @@ ACTIONS = {'sword': ['move 1', 'move -1', 'strafe 1', 'strafe -1', 'attack 1', '
 HEALTH_REWARD = 10
 DAMAGE_DEALT_REWARD = 15
 FAILURE_REWARD = -20
+#MAX_SCORE = 0
+#MIN_SCORE = 100

@@ -9,6 +9,8 @@ import os, sys, random
 import numpy as np
 from collections import defaultdict, deque
 
+recorded_file_name = os.getcwd() + "/Recordings/recording_sword.tgz"
+
 class RamboSteve():
     """
     <informative stuff here later>
@@ -23,7 +25,7 @@ class RamboSteve():
         self.weapon = 'sword'
 
         if q_table:
-            p_file = open(q_table, "r")
+            p_file = open(q_table, 'r')
             self.q_table = pickle.load(p_file)
             p_file.close()
         else:
@@ -46,7 +48,8 @@ class RamboSteve():
         return: Tuple -> (distance, health, weapon)
         """
         if entity['name'] not in c.HEIGHT_CHART:
-            return (None, None, None)
+            print(entity['name'])
+            return ('Finished', )
 
         euclid_dist = self.calculate_distance(x=observation['XPos'], 
                                               y=observation['YPos'], 
@@ -93,13 +96,22 @@ class RamboSteve():
         if not health_lost and not damage_dealt:
             return c.FAILURE_REWARD
 
-        return health_lost * c.HEALTH_REWARD + damage_dealt * c.DAMAGE_DEALT_REWARD
+        return health_lost * -c.HEALTH_REWARD + damage_dealt * c.DAMAGE_DEALT_REWARD
 
     def choose_action(self, curr_state, possible_actions, eps):
         """
         LOL FIX THIS LATER
         """
-        return random.choice(possible_actions) if random.random() < eps else random.choice([k for k, v in self.q_table[curr_state].items() if v == max(self.q_table[curr_state].items(), key=lambda x: (x[1], x[0]))[1] and k in possible_actions])
+        #return random.choice(possible_actions) if random.random() < eps else random.choice([k for k, v in self.q_table[curr_state].items() if v == max(self.q_table[curr_state].items(), key=lambda x: (x[1], x[0]))[1] and k in possible_actions])
+        q_actions = [a for a in self.q_table[curr_state].items() if a[0] in possible_actions]
+        max_state = max([i[1] for i in self.q_table[curr_state].items()])
+        max_states = [action[0] for action in q_actions if action[1] == max_state]
+        rnd = random.random()
+        if rnd < eps:
+            return random.choice(possible_actions)
+            # a = random.randint(0, len(possible_actions) - 1)
+            # return possible_actions[a]
+        return random.choice(max_states)
 
     def calculate_yaw_to_mob(self, observation, entity):
         """
@@ -125,7 +137,10 @@ class RamboSteve():
         """
         x_diff = entity['x'] - observation['XPos']
         z_diff = entity['z'] - observation['ZPos']
-        y_diff = (entity['y'] + c.HEIGHT_CHART[entity['name']] / 2) - (observation['YPos'] + 1.8) 
+        if self.weapon == 'sword':
+            y_diff = (entity['y'] + c.HEIGHT_CHART[entity['name']] / 2) - (observation['YPos'] + 1.8)
+        else:
+            y_diff = (entity['y'] + c.HEIGHT_CHART[entity['name']]) - (observation['YPos'] + 1.8)
 
         height_dist = np.sqrt(x_diff**2 + z_diff**2)
 
@@ -156,32 +171,136 @@ class RamboSteve():
         old_q = self.q_table[curr_s][curr_a]
         self.q_table[curr_s][curr_a] = old_q + self.alpha * (G - old_q)
 
+    def track_target(self, observation, entity):
+        if not self.agent:
+            return
+        
+        if entity['name'] in c.HEIGHT_CHART.keys():
+            delta_yaw = self.calculate_yaw_to_mob(observation, entity)
+            delta_pitch = self.calculate_pitch_to_mob(observation, entity)
+            self.agent.sendCommand('turn {}'.format(delta_yaw))
+            #self.agent.sendCommand('pitch {}'.format(delta_pitch))
+        else:
+            self.agent.sendCommand('turn 0')
+            self.agent.sendCommand('pitch 0')
+            self.agent.sendCommand('move 0')
+            self.agent.sendCommand('attack 0')
+
+    def perform_action(self, action):
+        if action == 'switch' and self.weapon == 'sword':
+            self.agent.sendCommand('hotbar.1 1')
+            self.agent.sendCommand('hotbar.1 0')
+            self.weapon = 'bow'
+            self.agent.sendCommand('use 0')
+        elif action == 'switch' and self.weapon == 'bow':
+            self.agent.sendCommand('hotbar.0 1')
+            self.agent.sendCommand('hotbar.0 0')
+            self.weapon = 'sword'
+            self.agent.sendCommand('use 0')
+        else:
+            self.agent.sendCommand(action)
+
+    def clear_action(self, action):
+        """Send a command to negate the given action"""
+        if action == 'attack':
+            self.agent.sendCommand("attack 0")
+        if action == 'switch':
+            self.agent.sendCommand("attack 0")
+        elif action == 'strafe':
+            self.agent.sendCommand("strafe 0")
+        elif action == 'move':
+            self.agent.sendCommand("move 0")
 
     def run(self, agent_host):
         start_time = time.time()
         self.agent = agent_host
         world_state = self.agent.getWorldState()
         S, A, R = deque(), deque(), deque()
+        time_step = 0
+        last_action_time = 0
+        first_loop = True
+        max_score = 0
+        min_score = 1000
+        state = ('', )
+        action = ''
 
-        while world_state.is_mission_running:
-            time.sleep(0.1)
+        while world_state.is_mission_running and state != ('finished', ):
+            #time.sleep(0.1)
             current_time = time.time()
             world_state = agent_host.getWorldState()
 
             if world_state.number_of_observations_since_last_state > 0:
                 obs = json.loads(world_state.observations[-1].text)
+            else:
+                continue
+
+            if state == ('last check',):
+                state = ('Finished',)
+                agent_health = obs['Life']
+                break
+
+            if 'Name' not in obs:
+                continue 
 
             mob = None
-            if obs['entities'][-1]['name']:
-                mob = obs['entities'][-1]['name']
+            for ent in obs['entities']:
+                if ent['name'] in c.HEIGHT_CHART:
+                    mob = ent['name']
+                    entity = ent
 
+            if not mob:
+                state = ('last check', )
+                continue
 
+            self.track_target(obs, entity)
 
-            
+            if current_time - last_action_time >= 200:
+                state = self.get_curr_state(obs, entity)
+                self.clear_action(action)
+                #clear action?
 
+                possible_actions = c.ACTIONS[self.weapon]
+                action = self.choose_action(state, possible_actions, self.epsilon)
 
+                damage_dealt = 0
+                health_lost = 0
 
-if __name__ == '__main__':
+                if first_loop:
+                    agent_health = obs['Life'] 
+                    mob_health = entity['life']
+                else:
+                    damage_dealt = mob_health - entity['life']
+                    health_lost = agent_health - obs['Life']
+                    #agent_health = obs['Life'] 
+                    #mob_health = entity['life']
+                
+                score = self.get_rewards(health_lost, damage_dealt)
+                max_score = max(score, max_score)
+                min_score = min(score, min_score)
+
+                R.append(score)
+                T = time_step - self.back_steps + 1
+                if T > 0:
+                    self.update_q_table(time_step, S, A, R, T)
+
+                S.append(state)
+                A.append(action)
+                time_step += 1
+                print('Time Step: {}, Action: {}'.format(time_step, action))
+                self.perform_action(action)
+                first_loop = False
+
+                if state == ('finished',):
+                    break
+
+        total_time = time.time() - start_time
+        print('max_score: {}, min_score: {}'.format(max_score, min_score))
+        print('mob: {}, damage_dealt: {}, health_lost: {}, kill'.format(mob, damage_dealt, health_lost))
+
+        self.history.append(())
+
+def run_mission():
+    rambo_steve = RamboSteve()
     agent_host = MalmoPython.AgentHost()
 
     try:
@@ -192,3 +311,51 @@ if __name__ == '__main__':
         exit(1)
     if agent_host.receivedArgument('help'):
         print(agent_host.getUsage())
+
+    my_mission = MalmoPython.MissionSpec(world.missionXML, True)
+    # adding the recordedFileName into MissionRecordSpec
+    my_mission_record = MalmoPython.MissionRecordSpec(recorded_file_name)
+    # adding the spec for adding the recording of the video
+    my_mission.requestVideo(1200, 720)
+    my_mission_record.recordMP4(30, 2000000)
+
+    #set up client to connect:
+    my_clients = MalmoPython.ClientPool()
+    my_clients.add(MalmoPython.ClientInfo('127.0.0.1', 10000))
+
+    # Attempt to start a mission:
+    print('Attempting to start mission...')
+    max_retries = 3
+    for retry in range(max_retries):
+        try:
+            agent_host.startMission( my_mission, my_mission_record )
+            break
+        except RuntimeError as e:
+            if retry == max_retries - 1:
+                print('Error starting mission:',e)
+                exit(1)
+            else:
+                time.sleep(2)
+
+    # Loop until mission starts:
+    print('Waiting for the mission to start ', end=' ')
+    world_state = agent_host.getWorldState()
+    while not world_state.has_mission_begun:
+        print('.', end='')
+        time.sleep(0.1)
+        world_state = agent_host.getWorldState()
+        for error in world_state.errors:
+            print('Error:',error.text)
+
+    print()
+    print('Mission running ', end=' ')
+
+    rambo_steve.run(agent_host)
+
+    print()
+    print('Mission ended')
+    time.sleep(2)
+
+if __name__ == '__main__':
+    for i in range(c.NUM_REPEATS):
+        run_mission()
