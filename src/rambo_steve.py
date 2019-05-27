@@ -230,7 +230,7 @@ class RamboSteve():
         state = ('', )
         action = ''
 
-        while world_state.is_mission_running and state != ('finished', ):
+        while world_state.is_mission_running:
             #time.sleep(0.1)
             current_time = time.time()
             world_state = agent_host.getWorldState()
