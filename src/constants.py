@@ -18,7 +18,7 @@ MOB_TYPE = 'Zombie'
 
 # Environment Mode: Creative or Survival
 ENV_MODE = 'Survival'
-NUM_REPEATS = 15
+NUM_REPEATS = 5
 
 # Arena 
 ARENA_WIDTH = 34
@@ -30,7 +30,7 @@ ARENA_BREADTH = 34
 #     'Blaze':2, 'Witch':1.95, 'Endermite':0.3, 'Wolf': 0.85
 # }
 
-HEIGHT_CHART = {'Wolf':0.85, 'Skeleton':1.95, 'Zombie':1.95}
+HEIGHT_CHART = {'Witch':1.95, 'Skeleton':1.95, 'Zombie':1.95}
 
 # States
 DISTANCE = ['close', 'near', 'far']
