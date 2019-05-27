@@ -74,6 +74,7 @@ class RamboSteve():
         x_diff = ent_x - x
         z_diff = ent_z - z
         y_diff = (ent_y + c.HEIGHT_CHART[mob_type] / 2) - (y + 1.8)
+        print('distance from mob: {}'.format(np.sqrt(x_diff**2 + y_diff**2 + z_diff**2)))
         return np.sqrt(x_diff**2 + y_diff**2 + z_diff**2)
 
     def discretize_health(self, observation):
@@ -82,7 +83,7 @@ class RamboSteve():
         """
         health = observation['Life']
 
-        return c.HEALTH[0] if health < 3 else c.HEALTH[1] if health < 10 else c.HEALTH[2]
+        return c.HEALTH[0] if health < 1.5 else c.HEALTH[1] if health < 7 else c.HEALTH[2]
 
     def discretize_distance(self, distance):
         """
