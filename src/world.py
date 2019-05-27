@@ -74,6 +74,7 @@ def getMissionXML():
             <Range name="entities" xrange="'''+str(35)+'''" yrange="'''+str(35)+'''" zrange="'''+str(35)+'''" />
           </ObservationFromNearbyEntities>
           <ObservationFromHotBar/>
+          <ChatCommands/>
         </AgentHandlers>
       </AgentSection>
     </Mission>'''

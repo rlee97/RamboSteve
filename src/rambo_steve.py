@@ -1,4 +1,5 @@
 import MalmoPython
+import malmoutils
 import math
 import time
 import json
@@ -9,7 +10,7 @@ import os, sys, random
 import numpy as np
 from collections import defaultdict, deque
 
-recorded_file_name = os.getcwd() + "test.tgz"
+# recorded_file_name = os.getcwd() + "test.tgz"
 here = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -42,9 +43,10 @@ class RamboSteve():
             ACTIONS = {'sword': ['move 1', 'move -1', 'strafe 1', 'strafe -1', 'attack 1', 'switch'],
                        'bow': ['move 1', 'move -1', 'strafe 1', 'strafe -1', 'use 1', 'use 0', 'switch']}
             """
-            self.q_table = {(dist, health, weapon): {action: 0 for action in c.ACTIONS[weapon]} for dist in c.DISTANCE
-                                                                                                for health in c.HEALTH
-                                                                                                for weapon in c.WEAPONS}
+            self.q_table = {(dist, health, weapon, mob): {action: 0 for action in c.ACTIONS[weapon]} for dist in c.DISTANCE
+                                                                                                     for health in c.HEALTH
+                                                                                                     for weapon in c.WEAPONS
+                                                                                                     for mob in list(c.HEIGHT_CHART)}
 
     def get_curr_state(self, observation, entity):
         """
@@ -65,7 +67,7 @@ class RamboSteve():
         distance = self.discretize_distance(euclid_dist)
         health = self.discretize_health(observation)
 
-        return (distance, health, self.weapon)
+        return (distance, health, self.weapon, entity['name'])
 
     def calculate_distance(self, x, y, z, ent_x, ent_y, ent_z, mob_type):
         """
@@ -217,7 +219,7 @@ class RamboSteve():
         elif action == 'move':
             self.agent.sendCommand("move 0")
 
-    def run(self, agent_host):
+    def run(self, agent_host, episode):
         start_time = time.time()
         self.agent = agent_host
         world_state = self.agent.getWorldState()
@@ -230,6 +232,8 @@ class RamboSteve():
         state = ('', )
         action = ''
         mob_dead = False
+
+        self.agent.sendCommand('chat EPISODE #{}'.format(episode))
 
         while world_state.is_mission_running and not mob_dead:
             #time.sleep(0.1)
@@ -297,6 +301,7 @@ class RamboSteve():
                 self.perform_action(action)
 
                 check_entities = json.loads(world_state.observations[-1].text)['entities']
+                print(set(ent['name'] for ent in check_entities))
 
                 for ent in check_entities:
                     if ent['name'] == mob and ent['life'] == 0.0:
@@ -304,7 +309,7 @@ class RamboSteve():
                         mob_dead = True
 
                 first_loop = False
-    
+
                 if state == ('finished',):
                     print('asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf')
                     break
@@ -337,7 +342,7 @@ class RamboSteve():
         except Exception as e:
             print(e)
 
-def run_mission(rambo_steve):
+def run_mission(rambo_steve, episode):
     agent_host = MalmoPython.AgentHost()
 
     try:
@@ -351,21 +356,23 @@ def run_mission(rambo_steve):
 
     my_mission = MalmoPython.MissionSpec(world.getMissionXML(), True)
     # adding the recordedFileName into MissionRecordSpec
-    my_mission_record = MalmoPython.MissionRecordSpec(recorded_file_name)
+    my_mission_record = MalmoPython.MissionRecordSpec()
+    # my_mission = malmoutils.get_default_recording_object(agent_host, "Mission")
     # adding the spec for adding the recording of the video
-    my_mission.requestVideo(1280, 720)
-    my_mission_record.recordMP4(30, 2000000)
+    # my_mission.requestVideo(1280, 720)
+    # my_mission_record.recordMP4(30, 2000000)
 
     #set up client to connect:
     my_clients = MalmoPython.ClientPool()
-    my_clients.add(MalmoPython.ClientInfo('127.0.0.1', 10000))
+    for i in range(5):
+        my_clients.add(MalmoPython.ClientInfo('127.0.0.1', c.MISSION_CONTROL_PORT + i))
 
     # Attempt to start a mission:
     print('Attempting to start mission...')
-    max_retries = 3
+    max_retries = 5
     for retry in range(max_retries):
         try:
-            agent_host.startMission( my_mission, my_mission_record )
+            agent_host.startMission( my_mission, my_clients, my_mission_record, 0, "RamboSteve" )
             break
         except RuntimeError as e:
             if retry == max_retries - 1:
@@ -387,7 +394,7 @@ def run_mission(rambo_steve):
     print()
     print('Mission running ', end=' ')
 
-    rambo_steve.run(agent_host)
+    rambo_steve.run(agent_host, episode)
 
     print()
     print('Mission ended')
@@ -396,8 +403,8 @@ def run_mission(rambo_steve):
 if __name__ == '__main__':
     rambo_steve = RamboSteve()
 
-    for i in range(c.NUM_REPEATS):
-        run_mission(rambo_steve)
+    for episode in range(c.NUM_REPEATS):
+        run_mission(rambo_steve, episode + 1)
 
     rambo_steve.save_q_table()
     rambo_steve.save_results()
