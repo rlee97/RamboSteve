@@ -19,7 +19,7 @@ class RamboSteve():
     """
     <informative stuff here later>
     """
-    def __init__(self, alpha=0.3, gamma=1, epsilon=0.6, back_steps=1, q_table=None):
+    def __init__(self, alpha=0.3, gamma=0.9, epsilon=0.6, back_steps=5, q_table=None):
         self.agent = None
         self.alpha = alpha
         self.gamma = gamma
@@ -218,15 +218,32 @@ class RamboSteve():
             self.agent.sendCommand(action)
 
     def clear_action(self, action):
-        """Send a command to negate the given action"""
-        if action == 'attack':
+        """
+        Send a command to negate the given action
+        """
+        print("action being cleared:", action)
+
+        if 'attack' in action:
             self.agent.sendCommand("attack 0")
-        if action == 'switch':
-            self.agent.sendCommand("attack 0")
-        elif action == 'strafe':
+        if 'use' in action:
+            self.agent.sendCommand("use 0")
+        elif 'switch' in action:
+            self.agent.sendCommand("use 0")
+        elif 'strafe' in action:
             self.agent.sendCommand("strafe 0")
-        elif action == 'move':
+        elif 'move' in action:
             self.agent.sendCommand("move 0")
+
+    def clear_all_actions(self):
+        """
+        Clear all actions when a mission is completed.
+        """
+        self.agent.sendCommand("attack 0")
+        self.agent.sendCommand("use 0")
+        self.agent.sendCommand("strafe 0")
+        self.agent.sendCommand("move 0")
+        self.agent.sendCommand("turn 0")
+        self.agent.sendCommand("pitch 0")
 
     def run(self, agent_host, episode):
         """
@@ -323,6 +340,8 @@ class RamboSteve():
                     if ent['name'] == mob and ent['life'] == 0.0:
                         print('{} IS MURDERED'.format(mob))
                         mob_dead = True
+                        self.clear_all_actions()
+                        
 
                 first_loop = False
 
