@@ -10,7 +10,7 @@ AGENT_START = '<Placement x="15" y="5" z="15" yaw="90"/>'
 WORLD_GENERATOR = '<FlatWorldGenerator generatorString="3;7,3,2,30*169;1;village"/>'
 
 # Mission constants
-MS_PER_TICK = 50
+MS_PER_TICK = 20
 AGENT_TICK_RATE = int(2.5 * MS_PER_TICK)
 
 # Mob Type
@@ -18,17 +18,19 @@ MOB_TYPE = 'Zombie'
 
 # Environment Mode: Creative or Survival
 ENV_MODE = 'Survival'
-NUM_REPEATS = 20
+NUM_REPEATS = 15
 
 # Arena 
 ARENA_WIDTH = 34
 ARENA_BREADTH = 34
 
 # Heights of all the enemies that we are doing:
-HEIGHT_CHART = {'Creeper':1.7, 'Skeleton':1.95, 'Spider':1, 'Zombie':1.95,
-    'Ghast':4, 'Zombie Pigman':1.95, 'Cave Spider':1, 'Silverfish':0.3,
-    'Blaze':2, 'Witch':1.95, 'Endermite':0.3, 'Wolf': 0.85
-}
+# HEIGHT_CHART = {'Creeper':1.7, 'Skeleton':1.95, 'Spider':1, 'Zombie':1.95,
+#     'Ghast':4, 'Zombie Pigman':1.95, 'Cave Spider':1, 'Silverfish':0.3,
+#     'Blaze':2, 'Witch':1.95, 'Endermite':0.3, 'Wolf': 0.85
+# }
+
+HEIGHT_CHART = {'Creeper':1.7, 'Skeleton':1.95, 'Zombie':1.95}
 
 # States
 DISTANCE = ['close', 'near', 'far']

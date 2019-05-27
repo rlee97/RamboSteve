@@ -1,0 +1,17 @@
+ffmpeg version N-93523-gb131a07e4b Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 8.2.1 (GCC) 20190212
+  configuration: --enable-gpl --enable-version3 --enable-sdl2 --enable-fontconfig --enable-gnutls --enable-iconv --enable-libass --enable-libdav1d --enable-libbluray --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libopus --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libtheora --enable-libtwolame --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libzimg --enable-lzma --enable-zlib --enable-gmp --enable-libvidstab --enable-libvorbis --enable-libvo-amrwbenc --enable-libmysofa --enable-libspeex --enable-libxvid --enable-libaom --enable-libmfx --enable-amf --enable-ffnvcodec --enable-cuvid --enable-d3d11va --enable-nvenc --enable-nvdec --enable-dxva2 --enable-avisynth --enable-libopenmpt
+  libavutil      56. 26.100 / 56. 26.100
+  libavcodec     58. 48.100 / 58. 48.100
+  libavformat    58. 26.101 / 58. 26.101
+  libavdevice    58.  7.100 / 58.  7.100
+  libavfilter     7. 48.100 /  7. 48.100
+  libswscale      5.  4.100 /  5.  4.100
+  libswresample   3.  4.100 /  3.  4.100
+  libpostproc    55.  4.100 / 55.  4.100
+Trailing options were found on the commandline.
+[image2pipe @ 000001fe77499fc0] Stream #0: not enough frames to estimate rate; consider increasing probesize
+Input #0, image2pipe, from 'pipe:':
+  Duration: N/A, bitrate: N/A
+    Stream #0:0: Video: ppm, rgb24, 1200x720, 30 tbr, 30 tbn, 30 tbc
+At least one output file must be specified

@@ -167,7 +167,7 @@ class RamboSteve():
         curr_s, curr_a = S.popleft(), A.popleft()
         R.popleft()
 
-        G = sum([self.gamma ** i * R[i] for i in range(len(S))])
+        G = sum([self.gamma ** i * R[i] for i in range(len(R))])
 
         if tau + self.back_steps < T:
             G += self.gamma ** self.back_steps * self.q_table[S[-1]][A[-1]]
@@ -185,7 +185,7 @@ class RamboSteve():
             self.agent.sendCommand('turn {}'.format(delta_yaw))
             #time.sleep(0.1)
             #self.agent.sendCommand("turn 0")
-            #self.agent.sendCommand('pitch {}'.format(delta_pitch))
+            self.agent.sendCommand('pitch {}'.format(delta_pitch))
         else:
             self.agent.sendCommand('turn 0')
             self.agent.sendCommand('pitch 0')
@@ -194,13 +194,13 @@ class RamboSteve():
 
     def perform_action(self, action):
         if action == 'switch' and self.weapon == 'sword':
-            self.agent.sendCommand('hotbar.1 1')
-            self.agent.sendCommand('hotbar.1 0')
+            self.agent.sendCommand('hotbar.2 1')
+            self.agent.sendCommand('hotbar.2 0')
             self.weapon = 'bow'
             self.agent.sendCommand('use 0')
         elif action == 'switch' and self.weapon == 'bow':
-            self.agent.sendCommand('hotbar.0 1')
-            self.agent.sendCommand('hotbar.0 0')
+            self.agent.sendCommand('hotbar.1 1')
+            self.agent.sendCommand('hotbar.1 0')
             self.weapon = 'sword'
             self.agent.sendCommand('use 0')
         else:
@@ -229,8 +229,9 @@ class RamboSteve():
         min_score = 1000
         state = ('', )
         action = ''
+        mob_dead = False
 
-        while world_state.is_mission_running:
+        while world_state.is_mission_running and not mob_dead:
             #time.sleep(0.1)
             current_time = time.time()
             world_state = agent_host.getWorldState()
@@ -262,7 +263,7 @@ class RamboSteve():
 
             if current_time - last_action_time >= 300:
                 state = self.get_curr_state(obs, entity)
-                self.clear_action(action)
+                #self.clear_action(action)
                 #clear action?
 
                 possible_actions = c.ACTIONS[self.weapon]
@@ -294,6 +295,14 @@ class RamboSteve():
                 time_step += 1
                 print('Time Step: {}, Action: {}'.format(time_step, action))
                 self.perform_action(action)
+
+                check_entities = json.loads(world_state.observations[-1].text)['entities']
+
+                for ent in check_entities:
+                    if ent['name'] == mob and ent['life'] == 0.0:
+                        print('{} IS MURDERED'.format(mob))
+                        mob_dead = True
+
                 first_loop = False
     
                 if state == ('finished',):
@@ -340,7 +349,7 @@ def run_mission(rambo_steve):
     if agent_host.receivedArgument('help'):
         print(agent_host.getUsage())
 
-    my_mission = MalmoPython.MissionSpec(world.missionXML, True)
+    my_mission = MalmoPython.MissionSpec(world.getMissionXML(), True)
     # adding the recordedFileName into MissionRecordSpec
     my_mission_record = MalmoPython.MissionRecordSpec(recorded_file_name)
     # adding the spec for adding the recording of the video
