@@ -344,7 +344,7 @@ def run_mission(rambo_steve):
     # adding the recordedFileName into MissionRecordSpec
     my_mission_record = MalmoPython.MissionRecordSpec(recorded_file_name)
     # adding the spec for adding the recording of the video
-    my_mission.requestVideo(1200, 720)
+    my_mission.requestVideo(1280, 720)
     my_mission_record.recordMP4(30, 2000000)
 
     #set up client to connect:
