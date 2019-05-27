@@ -10,12 +10,14 @@ import numpy as np
 from collections import defaultdict, deque
 
 recorded_file_name = os.getcwd() + "/Recordings/recording_sword.tgz"
+here = os.path.dirname(os.path.abspath(__file__))
+
 
 class RamboSteve():
     """
     <informative stuff here later>
     """
-    def __init__(self, alpha=0.3, gamma=1, epsilon=0.3, back_steps=1, q_table=None):
+    def __init__(self, alpha=0.3, gamma=1, epsilon=0.6, back_steps=1, q_table=None):
         self.agent = None
         self.alpha = alpha
         self.gamma = gamma
@@ -23,11 +25,12 @@ class RamboSteve():
         self.back_steps = back_steps
         self.history = []
         self.weapon = 'sword'
+        self.qtable_fname = 'q_table_a{}_g{}_eps{}_n{}.p'.format(self.alpha, self.gamma, self.epsilon, self.back_steps)
+        self.results_fname = 'results_a{}_g{}_eps{}_n{}.txt'.format(self.alpha, self.gamma, self.epsilon, self.back_steps)
 
         if q_table:
-            p_file = open(q_table, 'r')
-            self.q_table = pickle.load(p_file)
-            p_file.close()
+            with open(q_table, 'rb') as f:
+                self.q_table = pickle.load(f)
         else:
             """
             # States
@@ -49,7 +52,7 @@ class RamboSteve():
         """
         if entity['name'] not in c.HEIGHT_CHART:
             print(entity['name'])
-            return ('Finished', )
+            return ('finished', )
 
         euclid_dist = self.calculate_distance(x=observation['XPos'], 
                                               y=observation['YPos'], 
@@ -96,7 +99,7 @@ class RamboSteve():
         if not health_lost and not damage_dealt:
             return c.FAILURE_REWARD
 
-        return health_lost * -c.HEALTH_REWARD + damage_dealt * c.DAMAGE_DEALT_REWARD
+        return health_lost * c.HEALTH_REWARD + damage_dealt * c.DAMAGE_DEALT_REWARD
 
     def choose_action(self, curr_state, possible_actions, eps):
         """
@@ -179,6 +182,8 @@ class RamboSteve():
             delta_yaw = self.calculate_yaw_to_mob(observation, entity)
             delta_pitch = self.calculate_pitch_to_mob(observation, entity)
             self.agent.sendCommand('turn {}'.format(delta_yaw))
+            #time.sleep(0.1)
+            #self.agent.sendCommand("turn 0")
             #self.agent.sendCommand('pitch {}'.format(delta_pitch))
         else:
             self.agent.sendCommand('turn 0')
@@ -234,10 +239,10 @@ class RamboSteve():
             else:
                 continue
 
-            if state == ('last check',):
-                state = ('Finished',)
-                agent_health = obs['Life']
-                break
+            #if state == ('last check',):
+            #    state = ('Finished',)
+            #    agent_health = obs['Life']
+            #    break
 
             if 'Name' not in obs:
                 continue 
@@ -249,12 +254,12 @@ class RamboSteve():
                     entity = ent
 
             if not mob:
-                state = ('last check', )
+                #state = ('last check', )
                 continue
 
             self.track_target(obs, entity)
 
-            if current_time - last_action_time >= 200:
+            if current_time - last_action_time >= 300:
                 state = self.get_curr_state(obs, entity)
                 self.clear_action(action)
                 #clear action?
@@ -289,18 +294,40 @@ class RamboSteve():
                 print('Time Step: {}, Action: {}'.format(time_step, action))
                 self.perform_action(action)
                 first_loop = False
-
+    
                 if state == ('finished',):
+                    print('asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf')
                     break
 
         total_time = time.time() - start_time
         print('max_score: {}, min_score: {}'.format(max_score, min_score))
-        print('mob: {}, damage_dealt: {}, health_lost: {}, kill'.format(mob, damage_dealt, health_lost))
+        print('mob: {}, damage_dealt: {}, health_lost: {}, total_time: {}'.format(mob, damage_dealt, health_lost, total_time))
 
-        self.history.append(())
+        self.history.append((mob, damage_dealt, health_lost, total_time))
 
-def run_mission():
-    rambo_steve = RamboSteve()
+    def save_q_table(self):
+        try:
+            with open(os.path.join(here, self.qtable_fname), 'wb+') as f:
+                print('Saving qtable into {}'.format(self.qtable_fname))
+                pickle.dump(dict(self.q_table), f)
+
+        except Exception as e:
+            print(e)
+
+    def save_results(self, append=False):
+        try:
+            f = open(self.results_fname, 'a+' if append else 'w+')
+            for result in self.history:
+                f.write(str(result[0]) + ',')
+                f.write(str(result[1]) + ',')
+                f.write('{:5.3f},'.format(result[2]))
+                f.write('{}'.format(result[3]))
+                f.write('\n')
+            f.close()
+        except Exception as e:
+            print(e)
+
+def run_mission(rambo_steve):
     agent_host = MalmoPython.AgentHost()
 
     try:
@@ -357,5 +384,10 @@ def run_mission():
     time.sleep(2)
 
 if __name__ == '__main__':
+    rambo_steve = RamboSteve()
+
     for i in range(c.NUM_REPEATS):
-        run_mission()
+        run_mission(rambo_steve)
+
+    rambo_steve.save_q_table()
+    rambo_steve.save_results()

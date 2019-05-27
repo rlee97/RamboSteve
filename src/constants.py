@@ -18,7 +18,7 @@ MOB_TYPE = 'Zombie'
 
 # Environment Mode: Creative or Survival
 ENV_MODE = 'Survival'
-NUM_REPEATS = 10
+NUM_REPEATS = 20
 
 # Arena 
 ARENA_WIDTH = 34

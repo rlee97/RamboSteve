@@ -43,7 +43,7 @@ missionXML='''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
                 <Name> ''' + c.AGENT_NAME + ''' </Name>
                 <AgentStart>
                   <Inventory>
-                    <InventoryItem slot="0" type="wooden_sword"/>
+                    <InventoryItem slot="0" type="diamond_sword"/>
                     <InventoryItem slot="1" type="bow"/>
                     <InventoryItem slot="2" type="arrow" quantity="64"/>
                   </Inventory>
