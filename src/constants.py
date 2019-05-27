@@ -30,7 +30,9 @@ ARENA_BREADTH = 34
 #     'Blaze':2, 'Witch':1.95, 'Endermite':0.3, 'Wolf': 0.85
 # }
 
-HEIGHT_CHART = {'Creeper':1.7, 'Skeleton':1.95, 'Zombie':1.95}
+# HEIGHT_CHART = {'Wolf':0.85, 'Skeleton':1.95, 'Zombie':1.95}
+
+HEIGHT_CHART = {'Zombie':1.95}
 
 # States
 DISTANCE = ['close', 'near', 'far']
