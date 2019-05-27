@@ -12,3 +12,6 @@ Our baseline for this project was to make a basic bot that will aim at the enemy
 
 [![](http://img.youtube.com/vi/4odQbF6FwT8/0.jpg)](http://www.youtube.com/watch?v=4odQbF6FwT8 "base sword recording")
 
+This is our first attempt using Q-learning:
+[![](http://img.youtube.com/vi/mOZiQ_C5NQo/0.jpg)](http://www.youtube.com/watch?v=mOZiQ_C5NQo "Q-learning Rambo Steve")
+
