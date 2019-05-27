@@ -28,7 +28,7 @@ class RamboSteve():
         self.history = pd.DataFrame(columns=['episode', 'mob_type', 'total_damage_dealt', 'total_health_lost', 'total_time', 'min_reward', 'max_reward','killed_mob'])
         self.weapon = 'sword'
         self.qtable_fname = 'q_table_a{}_g{}_eps{}_n{}.p'.format(self.alpha, self.gamma, self.epsilon, self.back_steps)
-        self.results_fname = 'results_a{}_g{}_eps{}_n{}.txt'.format(self.alpha, self.gamma, self.epsilon, self.back_steps)
+        self.results_fname = 'results_a{}_g{}_eps{}_n{}'.format(self.alpha, self.gamma, self.epsilon, self.back_steps)
 
         if q_table:
             with open(q_table, 'rb') as f:
