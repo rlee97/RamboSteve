@@ -11,9 +11,25 @@ Project RamboSteve aims to teach an AI agent to efficiently use a sword and bow 
 
 **EVALUATION**
 
-In terms of qualitative evaluation, we will measure the amount of damage taken and the amount of damage dealt.
+In order to evaluate our Q-Tabular learning implementation, we trained the agent through 1000 episodes on three different mob types: Witch, Zombie, and Skeleton.
+
+In terms of qualitatative evaluation, we will measure how well our agent fights by observing the amount of damage taken and the amount of damage dealt. This will provide insight about whether the agent is learning to deal damage while avoiding as much damage as possible. Here is a plot on the overall health lost and the overall damage dealt.
 
 ![alt text](https://raw.githubusercontent.com/rlee97/RamboSteve/master/graphs/Overall_health_damage.png)
+
+On observation, everytime more damage is dealt, less health is lost and vice versa. We believe that this is a good indication that our agent is properly avoiding damage while killing mobs. However, we also notice that the damage dealt and health lost does not converge. This may either be because we have not trained our agent enough, or because our epsilon value causes our decision-making to be too random.
+
+We will now quantitatively measure how well our agent did against the Zombie mob type. Here is a plot showing the ratio of agent deaths to Zombie deaths while fighting zombies.
+
+![alt text](https://raw.githubusercontent.com/rlee97/RamboSteve/master/graphs/Zombie_killed_mob.png)
+
+As can be seen, the agent succeeds in killing Zombies most of the time. This indicates that our Q-Tabular learning algorithm is selecting the correct actions to kill a Zombie. However, upon further inspection, we see that the amount of rewards gained from killing zombies neither converges nor improves. This behavior is shown in the graph below.
+
+![alt text](https://raw.githubusercontent.com/rlee97/RamboSteve/master/graphs/Zombie_rewards.png)
+
+This behavior may be a result of our reward system. Currently, we only measure rewards by health and damage dealt. By adding more rewards and a more complex state space, our agent may begin to improve marginally.
+
+Upon further thought, we plan on adding a Mission Time reward. This may help our learning algorithm improve by forcing it to find actions that yield the swiftest mission clear time. We will evaluate this feature in the future.
 
 **REMAINING GOALS AND CHALLENGES**
 
