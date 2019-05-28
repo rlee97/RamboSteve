@@ -18,16 +18,31 @@ Our approach for our current implementation uses Q-Tabular learning. In short, o
 
 Currently, our action is chosen based on our Q-Table and epsilon. Given a state, our agent chooses an action in the table with the highest Q-Value with a $1 - epsilon$ chance of selecting a random action.
 
-When an action is completed, we must get our new state and reward from the environment, along with updating our Q-Table with the knowledge that is obtained from the previous action. We update the Q-Table by adding our old Q-value (oldq) to our learning rate * (G - oldq). Our G value is calculated as follows.
+When an action is completed, we must get our new state and reward from the environment, along with updating our Q-Table with the knowledge that is obtained from the previous action.
 
-        G = sum([self.gamma ** i * R[i] for i in range(len(R))])
+Originally, we updated our Q-Table using the Bellman Equation. Our implementation is based on the following image.
 
-        if tau + self.back_steps < T:
-            G += self.gamma ** self.back_steps * self.q_table[S[-1]][A[-1]]
+![alt text](https://raw.githubusercontent.com/rlee97/RamboSteve/master/docs/assets/q_tabular_action.png)
 
-{% raw %}
-$$  a^2 + b^2 = c^2 $$
-{% endraw %}
+We then further experimented on our Q-Table by using another equation by adding our old Q-value (oldq) to our learning rate * (G - oldq). Our G value is calculated as follows.
+
+        G = sum([gamma ** i * R[i] for i in range(len(R))])
+
+        if tau + back_steps < T:
+            G += gamma ** back_steps * q_table[S[-1]][A[-1]]
+
+Regarding our MDP states, our program separates the world into weapons, distance, and health. For our weapons, our agent can use the switch command to move between either a sword or a bow. However, distance and health are near continuous and cannot be represented in a Q-Table. We solve this problem by discretizing our distance and health states as follows:
+
+        DISTANCE = ['close', 'near', 'far']
+        HEALTH = ['low', 'med', 'high']
+
+This reduces our state space significantly and therefore allows our agent to learn more quickly. 
+
+Our current reward function is very basic. We measure our reward on the amount of health lost and damage dealt. Our current reward algorithm is calculated using the health lost and damage dealt per mission, along with our HEALTH_REWARD and DAMAGE_DEALT_REWARD as follows:
+        
+        health_lost * c.HEALTH_REWARD + damage_dealt * c.DAMAGE_DEALT_REWARD
+
+HEALTH_REWARD is currently set to 10, and DAMAGE_DEALTH_REWARD is set to 15. When an agent loses, our FAILURE_REWARD constant returns a reward of -20. Our current rewards are not too varied and we expect them these numbers to encourage our agent to at least kill the the enemy without losing too much health.
 
 **EVALUATION**
 
