@@ -375,7 +375,7 @@ class RamboSteve():
 
     def save_results(self):
         print('Saving results into {}'.format(self.results_fname))
-        self.history.to_csv('{}.csv'.format(self.results_fname))
+        self.history.to_csv('{}.csv'.format(self.results_fname), index=False)
 
     """
     def save_results(self, append=False):
