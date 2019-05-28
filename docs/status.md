@@ -76,19 +76,3 @@ http://microsoft.github.io/malmo/0.30.0/Schemas/Mission.html
 
 https://microsoft.github.io/malmo/0.30.0/Documentation/index.html
 
-<p align="center">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/uM0Vs73V5_c" frameborder="0" allowfullscreen></iframe>
-</p>
-
-<p align="center">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/4odQbF6FwT8" frameborder="0" allowfullscreen></iframe>
-</p>
-
-
-
-This is our first attempt using Q-learning:
-
-<p align="center">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/mOZiQ_C5NQo" frameborder="0" allowfullscreen></iframe>
-</p>
-
