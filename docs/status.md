@@ -9,6 +9,21 @@ Project RamboSteve aims to teach an AI agent to efficiently use a sword and bow 
 
 **APPROACH**
 
+Our approach for our current implementation uses Q-Tabular learning. In short, our implementation is a table of valus for every state and action that we define in our environment. We begin by initializing all of our States, Actions, and Rewards (S, A, and R) to be uniform (all zeros). We then make our agent choose an action given an observation. As we observe the rewards that we obtain for each action, we update our table accordingly.
+
+Currently, our action is chosen based on our Q-Table and epsilon. Given a state, our agent chooses an action in the table with the highest Q-Value with a $1 - epsilon$ chance of selecting a random action.
+
+When an action is completed, we must get our new state and reward from the environment, along with updating our Q-Table with the knowledge that is obtained from the previous action. We update the Q-Table by adding our old Q-value (oldq) to our learning rate * (G - oldq). Our G value is calculated as follows.
+
+        G = sum([self.gamma ** i * R[i] for i in range(len(R))])
+
+        if tau + self.back_steps < T:
+            G += self.gamma ** self.back_steps * self.q_table[S[-1]][A[-1]]
+
+{% raw %}
+$$  a^2 + b^2 = c^2 $$
+{% endraw %}
+
 **EVALUATION**
 
 In order to evaluate our Q-Tabular learning implementation, we trained the agent through 1000 episodes on three different mob types: Witch, Zombie, and Skeleton.
@@ -43,6 +58,18 @@ approximate q values that will scale our project to different arena sizes and di
 The largest challenge that we currently face is that our agent highly favors usage of the bow over the sword. We will first attempt to explore possible causes of this behavior by changing our hyperparameters. In addition, the mission time reward as discussed in our goal section will likely provide further insight into why the agent may prefer the bow over the sword. This is because the sword deals more damage than the bow and increasing the reward for mission time could possibly lead to the agent choosing the sword over the bow. Some of our smaller challenges involve different mob types and their edge cases. Since our agent will train on different mob types, we must increase the pool of mobs that it can fight. However, some mob types such as the Zombie Pigman, will cause an unknown error in the XML. Also, when a Creeper explodes, the mission fails to terminate correctly because the creeper no longer exists in the entity list. We will need information on the creeper in the entity list to end the mission. As of now, when an episode completes, the timer continues to play until the end before the episode is terminated. The problem is unknown and we hope to fix the issue to save time and quickly train our agent.
 
 **RESOURCES USED**
+
+https://github.com/dennybritz/reinforcement-learning
+
+https://github.com/Microsoft/malmo/blob/master/Malmo/samples/Python_examples/tabular_q_learning.py#L375
+
+https://ststevens.github.io/TeamBabylon/
+
+https://medium.com/emergent-future/simple-reinforcement-learning-with-tensorflow-part-0-q-learning-with-tables-and-neural-networks-d195264329d0
+
+http://microsoft.github.io/malmo/0.30.0/Schemas/Mission.html
+
+https://microsoft.github.io/malmo/0.30.0/Documentation/index.html
 
 <p align="center">
 <iframe width="560" height="315" src="https://www.youtube.com/embed/uM0Vs73V5_c" frameborder="0" allowfullscreen></iframe>
