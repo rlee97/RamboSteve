@@ -3,6 +3,8 @@ layout: default
 title:  Home
 ---
 
+![](cs175_banner_rambo_steve.png)
+
 Source code: https://github.com/rlee97/RamboSteve
 
 Reports:
