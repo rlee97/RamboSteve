@@ -10,15 +10,15 @@ title: Status
 
 **PROJECT SUMMARY**
 
-Project RamboSteve aims to teach an AI agent to efficiently use a sword and bow to kill  multiple mob types. Currently, the arena is an enclosed cuboid that spawns one enemy per episode. As of now, the agent is trained on a Q-table to find the optimal strategy for killing an enemy. At the beginning of each episode, the agent and enemy statically spawn facing one another. At each observation, the agent has multiple actions that it can take, such as moving forward or backward, attacking, using an inventory slot, and switching weapons. Based on the Q-table, the agent must take a chosen action and return a reward to update the Q-table for the given action. Since we use a Q-Table, our state space must be discretized. We keep track of distance, health, and weapons as our states. However it is important to note since the agent's camera angles are continuous, we simplify our discrete state space by automatically calculating the angle the agent must face prior to taking an action at each observation.
+Project RamboSteve aims to teach an AI agent to efficiently use a sword and bow to kill  multiple mob types. Our arena is an enclosed cuboid that spawns one enemy per episode. Currently, the agent is trained on a Q-table to find the optimal strategy for killing an enemy. At the beginning of each episode, the agent and enemy statically spawn facing one another. Following the initial spawn, the agent gets an observation and has multiple actions that it can take, such as moving forward or backward, attacking, using an inventory slot, and switching weapons. Based on the Q-table, the agent must take a chosen action and return a reward to update the Q-table for the given action. Since we use a Q-Table, our state space must be discretized. We keep track of distance, health, and weapons as our states. However it is important to note since the agent's camera angles are continuous, we simplify our discrete state space by automatically calculating the angle the agent must face prior to taking an action at each observation. 
 
 **APPROACH**
 
-Our approach for our current implementation uses Q-Tabular learning. In short, our implementation is a table of valus for every state and action that we define in our environment. We begin by initializing all of our States, Actions, and Rewards (S, A, and R) to be uniform (all zeros). We then make our agent choose an action given an observation. As we observe the rewards that we obtain for each action, we update our table accordingly.
+Our approach for our current implementation uses Q-Tabular learning. In short, our implementation is a table of values for every state and action that we define in our environment. We begin by initializing all of our States, Actions, and Rewards (S, A, and R) to be uniform (all zeros). We then make our agent choose an action given an observation. As we observe the rewards that we obtain for each action, we update our table accordingly.
 
 The hyperparameters that we currently train our agent on is alpha = 0.3, gamma = 0.9, epsilon = 0.6, and back_steps = 5.
 
-Our action is chosen based on our Q-Table and epsilon. Given a state, our agent chooses an action in the table with the highest Q-Value with a $1 - \epsilon$ chance of selecting a random action.
+Our action is chosen based on our Q-Table and epsilon. Given a state, our agent chooses an action in the table with the highest Q-Value with a {% raw %} $$ 1 - \epsilon $$ {% endraw %} chance of selecting a random action.
 
 When an action is completed, we must get our new state and reward from the environment, along with updating our Q-Table with the knowledge that is obtained from the previous action.
 
@@ -33,7 +33,7 @@ We then further experimented on our Q-Table by using another equation by adding 
         if tau + back_steps < T:
             G += gamma ** back_steps * q_table[S[-1]][A[-1]]
 
-Regarding our MDP states, our program separates the world into weapons, distancee, health and mob type. For our weapons, our agent can use the switch command to move between either a sword or a bow. However, distance and health are near continuous and cannot be represented in a Q-Table. We solve this problem by discretizing our distance and health states. This reduces our state space significantly and therefore allows our agent to learn more quickly. We also include each of our trained mob types as a state. Our different possible states are displayed as follows.
+Regarding our MDP states, our program separates the world into weapons, distance, health and mob type. For our weapons, our agent can use the switch command to move between either a sword or a bow. However, distance and health are near continuous and cannot be represented in a Q-Table. We solve this problem by discretizing our distance and health states. This reduces our state space significantly and therefore allows our agent to learn more quickly. We also include each of our trained mob types as a state. Our different possible states are displayed as follows.
 
         DISTANCE = ['close', 'near', 'far']
         HEALTH = ['low', 'med', 'high']
