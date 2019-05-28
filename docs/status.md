@@ -7,6 +7,10 @@ title: Status
 
 Project RamboSteve aims to teach an AI agent to efficiently use a sword and bow to kill  multiple mob types. Currently, the arena is an enclosed cuboid that spawns one enemy per episode. As of now, the agent is trained on a Q-table to find the optimal strategy for killing an enemy. At the beginning of each episode, the agent and enemy statically spawn facing one another. At each observation, the agent has multiple actions that it can take, such as moving forward or backward, attacking, using an inventory slot, and switching weapons. Based on the Q-table, the agent must take a chosen action and return a reward to update the Q-table for the given action. Since we use a Q-Table, our state space must be discretized. We keep track of distance, health, and weapons as our states. However it is important to note since the agent's camera angles are continuous, we simplify our discrete state space by automatically calculating the angle the agent must face prior to taking an action at each observation.
 
+**APPROACH**
+
+**EVALUATION**
+
 **REMAINING GOALS AND CHALLENGES**
 
 **Goals**
@@ -17,6 +21,8 @@ approximate q values that will scale our project to different arena sizes and di
 **Challenges**
 
 The largest challenge that we currently face is that our agent highly favors usage of the bow over the sword. We will first attempt to explore possible causes of this behavior by changing our hyperparameters. In addition, the mission time reward as discussed in our goal section will likely provide further insight into why the agent may prefer the bow over the sword. This is because the sword deals more damage than the bow and increasing the reward for mission time could possibly lead to the agent choosing the sword over the bow. Some of our smaller challenges involve different mob types and their edge cases. Since our agent will train on different mob types, we must increase the pool of mobs that it can fight. However, some mob types such as the Zombie Pigman, will cause an unknown error in the XML. Also, when a Creeper explodes, the mission fails to terminate correctly because the creeper no longer exists in the entity list. We will need information on the creeper in the entity list to end the mission. As of now, when an episode completes, the timer continues to play until the end before the episode is terminated. The problem is unknown and we hope to fix the issue to save time and quickly train our agent.
+
+**RESOURCES USED**
 
 <p align="center">
 <iframe width="560" height="315" src="https://www.youtube.com/embed/uM0Vs73V5_c" frameborder="0" allowfullscreen></iframe>
