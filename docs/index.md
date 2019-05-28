@@ -11,8 +11,6 @@ Reports:
 - [Status](status.html)
 - [Final](final.html)
 
-See the [HTML <-> Markdown Quick Reference (Cheat Sheet)][quickref].
-
 Our team is creating a bot that targets and attempts to kill the enemy in the most efficient way. Our bot uses Q-learning to decide between attacking, advancing, or retreating. We use Microsoft's Project Malmo to interact with Minecraft. 
 
 
