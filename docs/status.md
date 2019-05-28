@@ -11,6 +11,10 @@ Project RamboSteve aims to teach an AI agent to efficiently use a sword and bow 
 
 **EVALUATION**
 
+In terms of qualitative evaluation, we will measure the amount of damage taken and the amount of damage dealt.
+
+![alt text](https://raw.githubusercontent.com/rlee97/RamboSteve/master/graphs/Overall_health_damage.png)
+
 **REMAINING GOALS AND CHALLENGES**
 
 **Goals**
