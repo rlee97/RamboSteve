@@ -5,12 +5,8 @@ title:  Team
 
 # {{ page.title }}
 
+### ***raymontl***, Raymond Lee
 
-## USER 1
-***raymontl***: ucinetid1
+### ***timothy4***, Timothy Yao
 
-## USER 2
-***timothy4***: ucinetid2
-
-## USER 3
-***rknguyen***: ucinetid3
+### ***rknguyen***, Raymond Nguyen
