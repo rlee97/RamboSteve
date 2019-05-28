@@ -100,9 +100,8 @@ class RamboSteve():
 
         NOTE: Add time factor?
         """
-        if not health_lost and not damage_dealt:
-            return c.FAILURE_REWARD
-
+        # @@@@@@@ I already added the episode_time, now we need to figure out how to calculate our reward using it
+        # @@@@@@@ Possibly increase reward the lower the episode time is, so + 1/episode_time * EPISODE_TIME_REWARD
         return health_lost * c.HEALTH_REWARD + damage_dealt * c.DAMAGE_DEALT_REWARD
 
     def choose_action(self, curr_state, possible_actions, eps):
@@ -271,6 +270,7 @@ class RamboSteve():
 
             if world_state.number_of_observations_since_last_state > 0:
                 obs = json.loads(world_state.observations[-1].text)
+                print(obs)
             else:
                 continue
 
@@ -304,12 +304,16 @@ class RamboSteve():
 
                 damage_dealt = 0
                 health_lost = 0
+                episode_time = 0
 
                 if first_loop:
                     total_agent_health = obs['Life']
                     total_mob_health = entity['life']
+                    # @@@@@@@ is agent_health and mob_health necessary? It does the same stuff as total_agent_health and total_mob_health
                     agent_health = obs['Life'] 
                     mob_health = entity['life']
+                    total_time = obs['TotalTime']
+                    
                 else:
                     total_health_lost = total_agent_health - obs['Life']
                     total_damage_dealt = total_mob_health - entity['life']
@@ -317,6 +321,7 @@ class RamboSteve():
                     health_lost = agent_health - obs['Life']
                     agent_health = obs['Life'] 
                     mob_health = entity['life']
+                    episode_time = obs['TotalTime'] - total_time
                 
                 score = self.get_rewards(health_lost, damage_dealt)
                 max_score = max(score, max_score)
