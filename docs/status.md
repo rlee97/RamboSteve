@@ -16,13 +16,15 @@ Project RamboSteve aims to teach an AI agent to efficiently use a sword and bow 
 
 Our approach for our current implementation uses Q-Tabular learning. In short, our implementation is a table of valus for every state and action that we define in our environment. We begin by initializing all of our States, Actions, and Rewards (S, A, and R) to be uniform (all zeros). We then make our agent choose an action given an observation. As we observe the rewards that we obtain for each action, we update our table accordingly.
 
-Currently, our action is chosen based on our Q-Table and epsilon. Given a state, our agent chooses an action in the table with the highest Q-Value with a $1 - epsilon$ chance of selecting a random action.
+The hyperparameters that we currently train our agent on is alpha = 0.3, gamma = 0.9, epsilon = 0.6, and back_steps = 5.
+
+Our action is chosen based on our Q-Table and epsilon. Given a state, our agent chooses an action in the table with the highest Q-Value with a $1 - \epsilon$ chance of selecting a random action.
 
 When an action is completed, we must get our new state and reward from the environment, along with updating our Q-Table with the knowledge that is obtained from the previous action.
 
 Originally, we updated our Q-Table using the Bellman Equation. Our implementation is based on the following image.
 
-![alt text](https://raw.githubusercontent.com/rlee97/RamboSteve/master/docs/assets/q_tabular_action.png)
+![alt text](https://raw.githubusercontent.com/rlee97/RamboSteve/master/docs/assets/images/q_tabular_action.png)
 
 We then further experimented on our Q-Table by using another equation by adding our old Q-value (oldq) to our learning rate * (G - oldq). Our G value is calculated as follows.
 
@@ -31,12 +33,16 @@ We then further experimented on our Q-Table by using another equation by adding 
         if tau + back_steps < T:
             G += gamma ** back_steps * q_table[S[-1]][A[-1]]
 
-Regarding our MDP states, our program separates the world into weapons, distance, and health. For our weapons, our agent can use the switch command to move between either a sword or a bow. However, distance and health are near continuous and cannot be represented in a Q-Table. We solve this problem by discretizing our distance and health states as follows:
+Regarding our MDP states, our program separates the world into weapons, distancee, health and mob type. For our weapons, our agent can use the switch command to move between either a sword or a bow. However, distance and health are near continuous and cannot be represented in a Q-Table. We solve this problem by discretizing our distance and health states. This reduces our state space significantly and therefore allows our agent to learn more quickly. We also include each of our trained mob types as a state. Our different possible states are displayed as follows.
 
         DISTANCE = ['close', 'near', 'far']
         HEALTH = ['low', 'med', 'high']
+        WEAPONS = ['sword', 'bow']
+        HEIGHT_CHART = {'Witch':1.95, 'Skeleton':1.95, 'Zombie':1.95}
 
-This reduces our state space significantly and therefore allows our agent to learn more quickly. 
+Every permutation of these states is a cell in our Q-Table. We also have a list of actions that our agent can take. These actions are listed below:
+
+        ACTIONS = {'sword': ['move 1', 'move -1', 'strafe 1', 'strafe -1', 'attack 1', 'switch'], 'bow': ['move 1', 'move -1', 'strafe 1', 'strafe -1', 'use 1', 'use 0', 'switch']}
 
 Our current reward function is very basic. We measure our reward on the amount of health lost and damage dealt. Our current reward algorithm is calculated using the health lost and damage dealt per mission, along with our HEALTH_REWARD and DAMAGE_DEALT_REWARD as follows:
         
@@ -75,7 +81,7 @@ approximate q values that will scale our project to different arena sizes and di
 
 **Challenges**
 
-The largest challenge that we currently face is that our agent highly favors usage of the bow over the sword. We will first attempt to explore possible causes of this behavior by changing our hyperparameters. In addition, the mission time reward as discussed in our goal section will likely provide further insight into why the agent may prefer the bow over the sword. This is because the sword deals more damage than the bow and increasing the reward for mission time could possibly lead to the agent choosing the sword over the bow. Some of our smaller challenges involve different mob types and their edge cases. Since our agent will train on different mob types, we must increase the pool of mobs that it can fight. However, some mob types such as the Zombie Pigman, will cause an unknown error in the XML. Also, when a Creeper explodes, the mission fails to terminate correctly because the creeper no longer exists in the entity list. We will need information on the creeper in the entity list to end the mission. As of now, when an episode completes, the timer continues to play until the end before the episode is terminated. The problem is unknown and we hope to fix the issue to save time and quickly train our agent.
+The largest challenge that we currently face is that our agent highly favors usage of the bow over the sword. We will first attempt to explore possible causes of this behavior by changing our hyperparameters. In addition, the mission time reward as discussed in our goal section will likely provide further insight into why the agent may prefer the bow over the sword. This is because the sword deals more damage than the bow and increasing the reward for mission time could possibly lead to the agent choosing the sword over the bow. Some of our smaller challenges involve different mob types and their edge cases. Since our agent will train on different mob types, we must increase the pool of mobs that it can fight. However, some mob types such as the Zombie Pigman, will cause an unknown error in the XML. Also, when a Creeper explodes, the mission fails to terminate correctly because the creeper no longer exists in the entity list. We will need information on the creeper in the entity list to end the mission. We also faced hurdles involving mobs with high health points, such as the witch mob type. Our agent never successfully kills it. We plan to overcome this challenge by exploring different weapon options, such as enchantments to help with killing these mobs. As of now, when an episode completes, the timer continues to play until the end before the episode is terminated. The problem is unknown and we hope to fix the issue to save time and quickly train our agent.
 
 **RESOURCES USED**
 
