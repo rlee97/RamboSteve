@@ -3,6 +3,11 @@ layout: default
 title: Status
 ---
 
+
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=Y0poiHRE6E4" frameborder="0" allowfullscreen></iframe>
+</p>
+
 **PROJECT SUMMARY**
 
 Project RamboSteve aims to teach an AI agent to efficiently use a sword and bow to kill  multiple mob types. Currently, the arena is an enclosed cuboid that spawns one enemy per episode. As of now, the agent is trained on a Q-table to find the optimal strategy for killing an enemy. At the beginning of each episode, the agent and enemy statically spawn facing one another. At each observation, the agent has multiple actions that it can take, such as moving forward or backward, attacking, using an inventory slot, and switching weapons. Based on the Q-table, the agent must take a chosen action and return a reward to update the Q-table for the given action. Since we use a Q-Table, our state space must be discretized. We keep track of distance, health, and weapons as our states. However it is important to note since the agent's camera angles are continuous, we simplify our discrete state space by automatically calculating the angle the agent must face prior to taking an action at each observation.
@@ -71,19 +76,4 @@ http://microsoft.github.io/malmo/0.30.0/Schemas/Mission.html
 
 https://microsoft.github.io/malmo/0.30.0/Documentation/index.html
 
-<p align="center">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/uM0Vs73V5_c" frameborder="0" allowfullscreen></iframe>
-</p>
-
-<p align="center">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/4odQbF6FwT8" frameborder="0" allowfullscreen></iframe>
-</p>
-
-
-
-This is our first attempt using Q-learning:
-
-<p align="center">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/mOZiQ_C5NQo" frameborder="0" allowfullscreen></iframe>
-</p>
 
