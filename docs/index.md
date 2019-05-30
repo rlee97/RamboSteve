@@ -5,7 +5,7 @@ title:  Home
 
 ![](cs175_banner_rambo_steve.png)
 
-Source code: https://github.com/rlee97/RamboSteve
+Source code: <a href="https://github.com/rlee97/RamboSteve">Rambo Steve Github Repo</a>
 
 Reports:
 
