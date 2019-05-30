@@ -19,13 +19,13 @@ class RamboSteve():
     """
     <informative stuff here later>
     """
-    def __init__(self, alpha=0.3, gamma=0.9, epsilon=0.6, back_steps=5, q_table=None):
+    def __init__(self, alpha=0.4, gamma=0.9, epsilon=0.7, back_steps=5, q_table=None):
         self.agent = None
         self.alpha = alpha
         self.gamma = gamma
         self.epsilon = epsilon
         self.back_steps = back_steps
-        self.history = pd.DataFrame(columns=['episode', 'mob_type', 'total_damage_dealt', 'total_health_lost', 'total_time', 'min_reward', 'max_reward','killed_mob'])
+        self.history = pd.DataFrame(columns=['episode', 'mob_type', 'total_damage_dealt', 'total_health_lost', 'total_time', 'min_reward', 'max_reward','killed_mob', 'episode_time'])
         self.weapon = 'sword'
         self.qtable_fname = 'q_table_a{}_g{}_eps{}_n{}.p'.format(self.alpha, self.gamma, self.epsilon, self.back_steps)
         self.results_fname = 'results_a{}_g{}_eps{}_n{}'.format(self.alpha, self.gamma, self.epsilon, self.back_steps)
@@ -94,7 +94,7 @@ class RamboSteve():
         """
         return c.DISTANCE[0] if distance < 3 else c.DISTANCE[1] if distance < 10 else c.DISTANCE[2]
 
-    def get_rewards(self, health_lost, damage_dealt):
+    def get_rewards(self, health_lost, damage_dealt, episode_time):
         """
         Calculates Rewards based on health lost and damage dealt
 
@@ -102,7 +102,7 @@ class RamboSteve():
         """
         # @@@@@@@ I already added the episode_time, now we need to figure out how to calculate our reward using it
         # @@@@@@@ Possibly increase reward the lower the episode time is, so + 1/episode_time * EPISODE_TIME_REWARD
-        return health_lost * c.HEALTH_REWARD + damage_dealt * c.DAMAGE_DEALT_REWARD
+        return health_lost * c.HEALTH_REWARD + damage_dealt * c.DAMAGE_DEALT_REWARD + 1/episode_time * c.EPISODE_TIME_REWARD
 
     def choose_action(self, curr_state, possible_actions, eps):
         """
@@ -270,7 +270,6 @@ class RamboSteve():
 
             if world_state.number_of_observations_since_last_state > 0:
                 obs = json.loads(world_state.observations[-1].text)
-                print(obs)
             else:
                 continue
 
@@ -304,7 +303,7 @@ class RamboSteve():
 
                 damage_dealt = 0
                 health_lost = 0
-                episode_time = 0
+                episode_time = 1
 
                 if first_loop:
                     total_agent_health = obs['Life']
@@ -321,9 +320,11 @@ class RamboSteve():
                     health_lost = agent_health - obs['Life']
                     agent_health = obs['Life'] 
                     mob_health = entity['life']
-                    episode_time = obs['TotalTime'] - total_time
+                    episode_time = obs['TotalTime'] - total_time + 1
+                    print('episode time:', episode_time)
                 
-                score = self.get_rewards(health_lost, damage_dealt)
+                score = self.get_rewards(health_lost, damage_dealt, episode_time)
+                print("Score at current time:", score)
                 max_score = max(score, max_score)
                 min_score = min(score, min_score)
 
@@ -358,7 +359,7 @@ class RamboSteve():
         print('max_score: {}, min_score: {}'.format(max_score, min_score))
         print('mob: {}, damage_dealt: {}, health_lost: {}, total_time: {}'.format(mob, damage_dealt, health_lost, total_time))
 
-        # 'episode': episode, 'mob_type': mob, 'damage_dealt': damage_dealt, 'health_lost': health_lost, 'total_time': total_time, 'min_reward': min_score, 'max_reward': max_score, 'killed_mob': mob_dead
+        # 'episode', 'mob_type', 'total_damage_dealt', 'total_health_lost', 'total_time', 'min_reward', 'max_reward','killed_mob', 'episode_time'
         self.history = self.history.append({'episode': episode, 
                                             'mob_type': mob, 
                                             'total_damage_dealt': total_damage_dealt, 
@@ -366,7 +367,8 @@ class RamboSteve():
                                             'total_time': total_time, 
                                             'min_reward': min_score, 
                                             'max_reward': max_score, 
-                                            'killed_mob': mob_dead}, ignore_index=True)
+                                            'killed_mob': mob_dead,
+                                            'episode_time': episode_time}, ignore_index=True)
 
 
     def save_q_table(self):
