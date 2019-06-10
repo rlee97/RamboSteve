@@ -17,9 +17,13 @@ here = os.path.dirname(os.path.abspath(__file__))
 
 class RamboSteve():
     """
-    <informative stuff here later>
+    Args
+            alpha:  <float>  learning rate
+            gamma:  <float>  value decay rate
+            n:      <int>    number of back steps to update
+            epsilon: <float> chance of taking a random action
     """
-    def __init__(self, alpha=0.4, gamma=0.9, epsilon=0.7, back_steps=5, q_table=None):
+    def __init__(self, alpha=0.3, gamma=1, epsilon=0.25 , back_steps=25, q_table=None):
         self.agent = None
         self.alpha = alpha
         self.gamma = gamma
@@ -94,21 +98,26 @@ class RamboSteve():
         """
         return c.DISTANCE[0] if distance < 3 else c.DISTANCE[1] if distance < 10 else c.DISTANCE[2]
 
-    def get_rewards(self, health_lost, damage_dealt, episode_time):
+    def get_rewards(self, health_lost, damage_dealt, episode_time, mob_health):
         """
         Calculates Rewards based on health lost and damage dealt
 
         NOTE: Add time factor?
         """
-        # @@@@@@@ I already added the episode_time, now we need to figure out how to calculate our reward using it
-        # @@@@@@@ Possibly increase reward the lower the episode time is, so + 1/episode_time * EPISODE_TIME_REWARD
-        return health_lost * c.HEALTH_REWARD + damage_dealt * c.DAMAGE_DEALT_REWARD + 1/episode_time * c.EPISODE_TIME_REWARD
+        # Possibly increase reward the lower the episode time is, so + 1/episode_time * EPISODE_TIME_REWARD
+        reward = health_lost * c.HEALTH_REWARD + damage_dealt * c.DAMAGE_DEALT_REWARD
+
+        if mob_health == 0:
+            reward += c.KILL_REWARD
+
+        return reward
 
     def choose_action(self, curr_state, possible_actions, eps):
         """
         LOL FIX THIS LATER
+        tried to do a 1 liner and it didn't work :(
         """
-        #return random.choice(possible_actions) if random.random() < eps else random.choice([k for k, v in self.q_table[curr_state].items() if v == max(self.q_table[curr_state].items(), key=lambda x: (x[1], x[0]))[1] and k in possible_actions])
+        # return random.choice(possible_actions) if random.random() < eps else random.choice([k for k, v in self.q_table[curr_state].items() if v == max(self.q_table[curr_state].items(), key=lambda x: (x[1], x[0]))[1] and k in possible_actions])
         q_actions = [a for a in self.q_table[curr_state].items() if a[0] in possible_actions]
         max_state = max([i[1] for i in self.q_table[curr_state].items()])
         max_states = [action[0] for action in q_actions if action[1] == max_state]
@@ -126,7 +135,7 @@ class RamboSteve():
         x_diff = entity['x'] - observation['XPos']
         z_diff = entity['z'] - observation['ZPos']
         yaw = observation['Yaw']
-        #y_diff = (entity['y'] + c.HEIGHT_CHART[entity['name']] / 2) - (y + 1.8) 
+        # y_diff = (entity['y'] + c.HEIGHT_CHART[entity['name']] / 2) - (y + 1.8) 
 
         yaw_to_mob = -180 * math.atan2(x_diff, z_diff) / math.pi
         delta_yaw = yaw_to_mob - yaw
@@ -190,8 +199,8 @@ class RamboSteve():
             delta_yaw = self.calculate_yaw_to_mob(observation, entity)
             delta_pitch = self.calculate_pitch_to_mob(observation, entity)
             self.agent.sendCommand('turn {}'.format(delta_yaw))
-            #time.sleep(0.1)
-            #self.agent.sendCommand("turn 0")
+            # time.sleep(0.1)
+            # self.agent.sendCommand("turn 0")
             self.agent.sendCommand('pitch {}'.format(delta_pitch))
         else:
             self.agent.sendCommand('turn 0')
@@ -264,7 +273,7 @@ class RamboSteve():
         self.agent.sendCommand('chat EPISODE #{}'.format(episode))
 
         while world_state.is_mission_running and not mob_dead:
-            #time.sleep(0.1)
+            # time.sleep(0.1)
             current_time = time.time()
             world_state = agent_host.getWorldState()
 
@@ -272,11 +281,6 @@ class RamboSteve():
                 obs = json.loads(world_state.observations[-1].text)
             else:
                 continue
-
-            #if state == ('last check',):
-            #    state = ('Finished',)
-            #    agent_health = obs['Life']
-            #    break
 
             if 'Name' not in obs:
                 continue 
@@ -288,15 +292,13 @@ class RamboSteve():
                     entity = ent
 
             if not mob:
-                #state = ('last check', )
+                # state = ('last check', )
                 continue
 
             self.track_target(obs, entity)
 
             if current_time - last_action_time >= 300:
                 state = self.get_curr_state(obs, entity)
-                #self.clear_action(action)
-                #clear action?
 
                 possible_actions = c.ACTIONS[self.weapon]
                 action = self.choose_action(state, possible_actions, self.epsilon)
@@ -308,7 +310,6 @@ class RamboSteve():
                 if first_loop:
                     total_agent_health = obs['Life']
                     total_mob_health = entity['life']
-                    # @@@@@@@ is agent_health and mob_health necessary? It does the same stuff as total_agent_health and total_mob_health
                     agent_health = obs['Life'] 
                     mob_health = entity['life']
                     total_time = obs['TotalTime']
@@ -321,9 +322,12 @@ class RamboSteve():
                     agent_health = obs['Life'] 
                     mob_health = entity['life']
                     episode_time = obs['TotalTime'] - total_time + 1
-                    print('episode time:', episode_time)
+
+                check_entities = json.loads(world_state.observations[-1].text)['entities']
+                print(set(ent['name'] for ent in check_entities))
                 
-                score = self.get_rewards(health_lost, damage_dealt, episode_time)
+                # Calculate the score
+                score = self.get_rewards(health_lost, damage_dealt, episode_time, mob_health)
                 print("Score at current time:", score)
                 max_score = max(score, max_score)
                 min_score = min(score, min_score)
@@ -339,20 +343,15 @@ class RamboSteve():
                 print('Time Step: {}, Action: {}'.format(time_step, action))
                 self.perform_action(action)
 
-                check_entities = json.loads(world_state.observations[-1].text)['entities']
-                print(set(ent['name'] for ent in check_entities))
-
-                for ent in check_entities:
-                    if ent['name'] == mob and ent['life'] == 0.0:
+                # If the mob is dead, clear actions
+                if entity['life'] == 0:
                         print('{} IS MURDERED'.format(mob))
                         mob_dead = True
                         self.clear_all_actions()
-                        
 
                 first_loop = False
 
                 if state == ('finished',):
-                    print('asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf')
                     break
 
         total_time = time.time() - start_time
@@ -418,7 +417,7 @@ def run_mission(rambo_steve, episode):
     # my_mission.requestVideo(1280, 720)
     # my_mission_record.recordMP4(30, 2000000)
 
-    #set up client to connect:
+    # set up client to connect:
     my_clients = MalmoPython.ClientPool()
     for i in range(5):
         my_clients.add(MalmoPython.ClientInfo('127.0.0.1', c.MISSION_CONTROL_PORT + i))
