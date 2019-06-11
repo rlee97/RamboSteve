@@ -10,7 +10,7 @@ AGENT_START = '<Placement x="15 " y="5" z="15" yaw="90"/>'
 WORLD_GENERATOR = '<FlatWorldGenerator generatorString="3;7,3,2,30*169;1;village"/>'
 
 # Mission constants
-MS_PER_TICK = 30
+MS_PER_TICK = 40
 AGENT_TICK_RATE = int(2.5 * MS_PER_TICK)
 
 # Mob Type
@@ -18,7 +18,7 @@ MOB_TYPE = 'Zombie'
 
 # Environment Mode: Creative or Survival
 ENV_MODE = 'Survival'
-NUM_REPEATS = 100
+NUM_REPEATS = 300
 
 # Arena 
 ARENA_WIDTH = 34
@@ -31,7 +31,7 @@ ARENA_BREADTH = 34
 # }
 # , 'Skeleton':1.95, 'Zombie':1.95, 'Ghast':4, 'Blaze':2}
 
-HEIGHT_CHART = {'Witch':1.95}
+HEIGHT_CHART = {'Zombie':1.95}
 
 # States
 DISTANCE = ['close', 'near', 'far']
@@ -46,8 +46,8 @@ ACTIONS = {'sword': ['move 1', 'move -1', 'strafe 1', 'strafe -1', 'attack 1', '
 HEALTH_REWARD = -10
 DAMAGE_DEALT_REWARD = 15
 FAILURE_REWARD = -100
-EPISODE_TIME_REWARD = -1
-KILL_REWARD = 200
+EPISODE_TIME_REWARD = 0
+KILL_REWARD = 100
 #MAX_SCORE = 0
 #MIN_SCORE = 100
 
