@@ -9,13 +9,15 @@ title: Final Report
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Y0poiHRE6E4" frameborder="0" allowfullscreen></iframe>
 </p>
 
+
 ## PROJECT SUMMARY
 
 Project RamboSteve aims to teach an AI agent to efficiently use a sword and bow to kill multiple mob types. Our arena is an enclosed cuboid that spawns one enemy per episode. Currently, the agent is trained on a Q-table to find the optimal strategy for killing an enemy. At the beginning of each episode, the agent and enemy statically spawn ten blocks away from one another. Following the initial spawn, the agent gets an observation and has multiple actions that it can take, such as moving forward or backward, attacking, using an inventory slot, and switching weapons. Based on the Q-table, the agent must take a chosen action and return a reward to update the Q-table for the given action. Since we use a Q-Table, our state space must be discretized. We keep track of distance, health, and weapons as our states. However it is important to note since the agent's camera angles are continuous, we simplify our discrete state space by automatically calculating the angle the agent must face prior to taking an action at each observation. 
 
+
 ## APPROACHES
 
-**Q-Tabular Learning**
+### Q-Tabular Learning
 
 Our approach for our current implementation uses Q-Tabular learning. In short, our implementation is a table of values for every state and action that we define in our environment. We begin by initializing all of our States, Actions, and Rewards (S, A, and R) to be uniform (all zeros). We then make our agent choose an action given an observation. As we observe the rewards that we obtain for each action, we update our table accordingly.
 Our action is chosen based on our Q-Table and epsilon. Given a state, our agent chooses an action in the table with the highest Q-Value with a {% raw %} $$ \epsilon $$ {% endraw %} chance of selecting a random action. When an action is completed, we must get our new state and reward from the environment, along with updating our Q-Table with the knowledge that is obtained from the previous action.
@@ -30,7 +32,7 @@ We then further experimented with our previous implementation by checking the im
 
 Following this, we simply use this value for the Bellman Equation as described above.
 
-**Hyperparameters**
+### Hyperparameters
 
 The hyperparameters that we previously trained our agent on is shown as follows:
 
@@ -42,7 +44,7 @@ These values were previously assigned based our team's initial predictions that 
 
 After some changes we realized that our epsilon was not working as we expected. After changing the implementation, we decided on a low epsilon to encourage our agent to choose less random actions and more optimal actions. In addition, our gamma was reduced to 0.9 to take into account decay rate in rewards through every iteration. Our backsteps were also increased to 10 in order to encourage our agent to completely draw the bow before firing to increase damage output and accuracy. We found that these changes helped our agent fight mobs that it would have otherwise never won against in the baseline, such as Witches and Blazes.
 
-**States**
+### States
 
 Our program separates the world into weapons, distance, health and mob type. For our weapons, our agent can use the switch command to move between either a sword or a bow. We also include each of our trained mob types as a state. 
         
@@ -65,7 +67,7 @@ Every permutation of these states is a cell in our Q-Table. We also have a list 
         ACTIONS = {'sword': ['move 1', 'move -1', 'strafe 1', 'strafe -1', 'attack 1', 'switch'], 
                     'bow': ['move 1', 'move -1', 'strafe 1', 'strafe -1', 'use 1', 'use 0', 'switch']}
 
-**Rewards**
+### Rewards
 Our baseline reward function was very basic. We measure our reward on the amount of health lost and damage dealt. The reward algorithm is calculated using the health lost and damage dealt per mission, along with our HEALTH_REWARD and DAMAGE_DEALT_REWARD as follows:
         
         health_lost * HEALTH_REWARD + damage_dealt * DAMAGE_DEALT_REWARD
@@ -79,6 +81,7 @@ HEALTH_REWARD is set to -10, and DAMAGE_DEALTH_REWARD is set to 15. We placed mo
 
 Our episode_time denotes the amount of time that has passed in the episode. EPISODE_TIME_REWARD is set to -0.1 and KILL_REWARD is set to 100. Both of these rewards are implemented in order to encourage our agent to finish the mission faster by killing the enemy.
 
+
 ## EVALUATION
 
 Baseline randomly choosing
@@ -86,6 +89,7 @@ Learning with our agent with hyperparameters
 Killing mob types that it wasn't able to kill before (graph of witch deaths)
 learning to completely draw a bow
 some problems with agent rewards still not converging, possibly needs to run for many more episodes
+
 
 ## REFERENCES
 
