@@ -9,7 +9,6 @@ title: Final Report
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Y0poiHRE6E4" frameborder="0" allowfullscreen></iframe>
 </p>
 
-
 ## PROJECT SUMMARY
 
 Project RamboSteve aims to teach an AI agent to efficiently use a sword and bow to kill multiple mob types. Our arena is an enclosed cuboid that spawns one enemy per episode. The Cuboid is layered with barrier blocks to ensure that the environment is not destroyed while training our agent.
@@ -70,7 +69,10 @@ Every permutation of these states is a cell in our Q-Table. We also have a list 
         ACTIONS = {'sword': ['move 1', 'move -1', 'strafe 1', 'strafe -1', 'attack 1', 'switch'], 
                     'bow': ['move 1', 'move -1', 'strafe 1', 'strafe -1', 'use 1', 'use 0', 'switch']}
 
-### Rewards and Observations
+### Observations and Rewards
+
+Between every action our agent gets an observation of the world. At every observation, we keep track of the agent health, mob health. Using these two types of values, we are able to obtain the health lost and damage dealt per observation. This is accomplished by subtracting the agent health and mob health of the current observation from the agent health and mob health from the previous observation. Given the health lost and damage dealt per observation, we are then able to use this data on a reward function that helps train our agent.
+
 Our baseline reward function was very basic. We measure our reward on the amount of health lost and damage dealt. The reward algorithm is calculated using the health lost and damage dealt per mission, along with our HEALTH_REWARD and DAMAGE_DEALT_REWARD as follows:
         
         health_lost * HEALTH_REWARD + damage_dealt * DAMAGE_DEALT_REWARD
@@ -84,7 +86,6 @@ HEALTH_REWARD is set to -10, and DAMAGE_DEALTH_REWARD is set to 15. We placed mo
 
 Our episode_time denotes the amount of time that has passed in the episode. EPISODE_TIME_REWARD is set to -0.1 and KILL_REWARD is set to 100. Both of these rewards are implemented in order to encourage our agent to finish the mission faster by killing the enemy.
 
-
 ## EVALUATION
 
 - Baseline randomly choosing
@@ -92,7 +93,6 @@ Our episode_time denotes the amount of time that has passed in the episode. EPIS
 - Killing mob types that it wasn't able to kill before (graph of witch deaths)
 - learning to completely draw a bow
 - some problems with agent rewards still not converging, possibly needs to run for  - many more episodes
-
 
 
 ## REFERENCES
