@@ -12,25 +12,28 @@ title: Final Report
 
 ## PROJECT SUMMARY
 
-Project RamboSteve aims to teach an AI agent to efficiently use a sword and bow to kill multiple mob types. Our arena is an enclosed cuboid that spawns one enemy per episode. Currently, the agent is trained on a Q-table to find the optimal strategy for killing an enemy. At the beginning of each episode, the agent and enemy statically spawn ten blocks away from one another. Following the initial spawn, the agent gets an observation and has multiple actions that it can take, such as moving forward or backward, attacking, using an inventory slot, and switching weapons. Based on the Q-table, the agent must take a chosen action and return a reward to update the Q-table for the given action. Since we use a Q-Table, our state space must be discretized. We keep track of distance, health, and weapons as our states. However it is important to note since the agent's camera angles are continuous, we simplify our discrete state space by automatically calculating the angle the agent must face prior to taking an action at each observation. 
+Project RamboSteve aims to teach an AI agent to efficiently use a sword and bow to kill multiple mob types. Our arena is an enclosed cuboid that spawns one enemy per episode. The Cuboid is layered with barrier blocks to ensure that the environment is not destroyed while training our agent.
 
+Currently, the agent is trained on a Q-table to find the optimal strategy for killing an enemy. At the beginning of each episode, the agent and enemy statically spawn facing one another. Following the initial spawn, the agent gets an observation and has multiple actions that it can take, such as moving forward or backward, attacking, using an inventory slot, and switching weapons. Based on the Q-table, the agent must take a chosen action and return a reward to update the Q-table for the given action. Since we use a Q-Table, our state space must be discretized. We keep track of distance, health, and weapons as our states. However it is important to note since the agent's camera angles are continuous, we simplify our discrete state space by automatically calculating the angle the agent must face prior to taking an action at each observation. 
 
 ## APPROACHES
 
 ### Q-Tabular Learning
 
 Our approach for our current implementation uses Q-Tabular learning. In short, our implementation is a table of values for every state and action that we define in our environment. We begin by initializing all of our States, Actions, and Rewards (S, A, and R) to be uniform (all zeros). We then make our agent choose an action given an observation. As we observe the rewards that we obtain for each action, we update our table accordingly.
-Our action is chosen based on our Q-Table and epsilon. Given a state, our agent chooses an action in the table with the highest Q-Value with a {% raw %} $$ \epsilon $$ {% endraw %} chance of selecting a random action. When an action is completed, we must get our new state and reward from the environment, along with updating our Q-Table with the knowledge that is obtained from the previous action.
+Our action is chosen based on our Q-Table and epsilon. Given a state, our agent chooses an action in the table with the highest Q-Value with a {% raw %} $$ \epsilon $$ {% endraw %} chance of selecting a random action. If there is a set of actions with the same maximal Q-value, we randomly select one action from the set of actions. When an action is completed, we must get our new state and reward from the environment, along with updating our Q-Table with the knowledge that is obtained from the previous action.
 
-Originally, we updated our Q-Table using the Bellman Equation. Our implementation is based on the following image.
+### Update Equation
+For each state and action, we update our Q-Table using the Bellman Equation. Our implementation is based on the following image.
 
 ![alt text](https://raw.githubusercontent.com/rlee97/RamboSteve/master/docs/assets/images/q_tabular_action.png)
 
-We then further experimented with our previous implementation by checking the implementation of the Bellman Equation from Assignment 2. Instead of multiplying the flat Gamma value to our reward. We instead get the sum of all of the gammas taking into account the decay rate per iteration for each reward as our Table's reward Queue is updated. We accomplish this as follows:
+We then further experimented with different implementations by checking the implementation of the Bellman Equation from Assignment 2. Instead of multiplying the flat Gamma value to our reward. We instead compute G, sum of all of the gammas taking into account the discount rate per iteration for each reward as our Table's reward Queue is updated. Using this new Gamma value G, we simply substitute the gamma variable in our Bellman Equation. We accomplish this as follows:
 
         G = sum([gamma ** i * R[i] for i in range(len(R))])
+        q_table[curr_s][curr_a] = old_q + alpha * (G - old_q)
 
-Following this, we simply use this value for the Bellman Equation as described above.
+As displayed above, G is the new gamma value taking into account the discount rate per iteration. The variables old_q and alpha correspond with the current q-value before the update and the learning rate respectively.
 
 ### Hyperparameters
 
@@ -67,7 +70,7 @@ Every permutation of these states is a cell in our Q-Table. We also have a list 
         ACTIONS = {'sword': ['move 1', 'move -1', 'strafe 1', 'strafe -1', 'attack 1', 'switch'], 
                     'bow': ['move 1', 'move -1', 'strafe 1', 'strafe -1', 'use 1', 'use 0', 'switch']}
 
-### Rewards
+### Rewards and Observations
 Our baseline reward function was very basic. We measure our reward on the amount of health lost and damage dealt. The reward algorithm is calculated using the health lost and damage dealt per mission, along with our HEALTH_REWARD and DAMAGE_DEALT_REWARD as follows:
         
         health_lost * HEALTH_REWARD + damage_dealt * DAMAGE_DEALT_REWARD
@@ -84,11 +87,12 @@ Our episode_time denotes the amount of time that has passed in the episode. EPIS
 
 ## EVALUATION
 
-Baseline randomly choosing
-Learning with our agent with hyperparameters
-Killing mob types that it wasn't able to kill before (graph of witch deaths)
-learning to completely draw a bow
-some problems with agent rewards still not converging, possibly needs to run for many more episodes
+- Baseline randomly choosing
+- Learning with our agent with hyperparameters
+- Killing mob types that it wasn't able to kill before (graph of witch deaths)
+- learning to completely draw a bow
+- some problems with agent rewards still not converging, possibly needs to run for  - many more episodes
+
 
 
 ## REFERENCES
