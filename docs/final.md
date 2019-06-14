@@ -88,7 +88,7 @@ Our episode_time denotes the amount of time that has passed in the episode. EPIS
 
 ## EVALUATION
 
-![text]('../graphs/Zombie_average_rewards.png') ![text]('../graphs/Zombie_killed_mob.png')
+![text](../graphs/Zombie_average_rewards.png) ![text](../graphs/Zombie_killed_mob.png)
 
 - Baseline randomly choosing
 - Learning with our agent with hyperparameters
