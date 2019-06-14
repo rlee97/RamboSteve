@@ -88,23 +88,35 @@ Our episode_time denotes the amount of time that has passed in the episode. EPIS
 
 ## EVALUATION
 
+Here are graphs of average rewards over 500 episodes of trainings under the specified hypermeters mentioned.  We have included a countplot of the agent success rate in killing the mobs also.  The average rewards are computed over groups of episodes for more clarity in our visualizations.
+
+#### Zombie
+
 <img src='graphs/Zombie_average_rewards.png' alt='drawing' width='425'/>   <img src='graphs/Zombie_killed_mob.png' alt='drawing' width='425'/>
+
+#### Skeleton
 
 <img src='graphs/Skeleton_average_rewards.png' alt='drawing' width='425'/>   <img src='graphs/Skeleton_killed_mob.png' alt='drawing' width='425'/>
 
+#### Blaze
+
 <img src='graphs/Blaze_average_rewards.png' alt='drawing' width='425'/>   <img src='graphs/Blaze_killed_mob.png' alt='drawing' width='425'/>
+
+#### Ghast
 
 <img src='graphs/Ghast_average_rewards.png' alt='drawing' width='425'/>   <img src='graphs/Ghast_killed_mob.png' alt='drawing' width='425'/>
 
+#### Witch
+
 <img src='graphs/Witch_average_rewards.png' alt='drawing' width='425'/>   <img src='graphs/Witch_killed_mob.png' alt='drawing' width='425'/>
 
+In order to evaluate our Q-Tabular learning implementation, we trained the agent through 500 episodes on five different mob types: Witch, Zombie, Skeleton, Ghast, and Blaze.  In addition the agent was also trained later for another 500 episodes with 3 additional mobs: Silverfish, Spider and Wolf.  The graphs above show the results for the first 5 mobs as those were the main mobs we used for testing.
 
-- Baseline randomly choosing
-- Learning with our agent with hyperparameters
-- Killing mob types that it wasn't able to kill before (graph of witch deaths)
-- learning to completely draw a bow
-- some problems with agent rewards still not converging, possibly needs to run for  - many more episodes
+As seen above, we can see an upward trend in average rewards for for Zombies, Skeletons, and even the Witch.  This indicates that the agent is learning to kill specific types of monsters as it trains for more and more episodes.  We used the results from the status report as our baseline, during which, the agent was unable to kill the witch.  We found that once we added a time factor to our rewards and tuned our hypermeters, the agent was able to successfully kill the witch multiple times while keeping the 30 second time limit.  It is interesting to note that the average rewards graph for Blaze is still somewhat erratical.  We suspect this has to do with how Blazes use projectiles to harm to agent, but has a lower health than Witches, which also fire projectiles.
 
+As far as specific strategies, the agent seems to learn to prefer using the bow for Zombies and Skeletons.  However it does learn to draw the sword when the Zombies or Skeletons draw closer.  In terms of the Ghast, there were two things we noticed about the agent's strategy: first, our agent seemed to prefer using the sword more in respect to how often it used the sword for Zombies and Skeletons and second, the agent tends to move into close range to attack the Ghast more often.  We believe this is the case because the agent has learned that using the sword could potentially reflect the projectile from the Ghast.  For the Witch, we noticed that our agent prefers to both use the bow and to strafe alot, dodging the Witch's projectile.  It should be noted that for our status report, the agent was unable to kill the witch at all, but after adding in time as a factor and changing the hyperparameters, our agent was able to successfully start killing the Witch.  In terms of the other 3 monsters, the Wolf and Spider were not much different in terms of strategy than the Skeleton or Zombie, but the agent does learn to move into close range and use the sword against silverfish.  We illustrated these findings in our video.  Based on the average rewards and the agent's success rate in killing the different mobs, we conclude that training the models had a clear effect on the strategies and 
+
+Overall, from the status report, we found that adding time as a factor for the rewards, giving the agent an additional rewrad for successfully killing the mob, and changing the discretized distance values for the states led to the largest improvements for our agent. Our biggest challenge was having the agent learn to kill the Witch and it started to do so.  We speculate that based on the upward trend presented in the Witch plot, that with more training, the agent would have started to kill the witch more consistently.
 
 ## REFERENCES
 
