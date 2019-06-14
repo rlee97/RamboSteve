@@ -63,7 +63,7 @@ def getMissionXML():
               </ModifierList>
           </MissionQuitCommands>
           <ObservationFromFullStats/>
-          <AgentQuitFromTimeUp timeLimitMs="'''+str(30000)+'''" description="out_of_time"/>
+          <AgentQuitFromTimeUp timeLimitMs="'''+ str( 30000 )+'''" description="out_of_time"/>
           <ContinuousMovementCommands turnSpeedDegs="900"/>
           <InventoryCommands>
             <ModifierList type = "deny-list">

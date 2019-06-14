@@ -23,7 +23,7 @@ class RamboSteve():
             n:      <int>    number of back steps to update
             epsilon: <float> chance of taking a random action
     """
-    def __init__(self, alpha=0.3, gamma=0.9, epsilon=0.2 , back_steps=10, q_table=None):
+    def __init__(self, alpha=0.3, gamma=0.9, epsilon=0.2 , back_steps=15, q_table=None):
         self.agent = None
         self.alpha = alpha
         self.gamma = gamma
@@ -275,7 +275,7 @@ class RamboSteve():
         action = ''
         mob_dead = False
 
-        self.agent.sendCommand('chat EPISODE #{}'.format(episode))
+        #self.agent.sendCommand('chat EPISODE #{}'.format(episode))
 
         while world_state.is_mission_running and not mob_dead:
             #time.sleep(0.01)
