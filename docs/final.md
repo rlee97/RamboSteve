@@ -88,25 +88,16 @@ Our episode_time denotes the amount of time that has passed in the episode. EPIS
 
 ## EVALUATION
 
-<img src='graphs/Zombie_average_rewards.png' alt='drawing' width='500'/>   <img src='graphs/Zombie_killed_mob.png' alt='drawing' width='500'/>
+<img src='graphs/Zombie_average_rewards.png' alt='drawing' width='425'/>   <img src='graphs/Zombie_killed_mob.png' alt='drawing' width='425'/>
 
-<img src='graphs/Zombie_average_rewards.png' alt='drawing' width='500'/>   <img src='graphs/Zombie_killed_mob.png' alt='drawing' width='500'/>
+<img src='graphs/Skeleton_average_rewards.png' alt='drawing' width='425'/>   <img src='graphs/Skeleton_killed_mob.png' alt='drawing' width='425'/>
 
-<img src='graphs/Zombie_average_rewards.png' alt='drawing' width='500'/>   <img src='graphs/Zombie_killed_mob.png' alt='drawing' width='500'/>
+<img src='graphs/Blaze_average_rewards.png' alt='drawing' width='425'/>   <img src='graphs/Blaze_killed_mob.png' alt='drawing' width='425'/>
 
-<img src='graphs/Zombie_average_rewards.png' alt='drawing' width='500'/>   <img src='graphs/Zombie_killed_mob.png' alt='drawing' width='500'/>
+<img src='graphs/Ghast_average_rewards.png' alt='drawing' width='425'/>   <img src='graphs/Ghast_killed_mob.png' alt='drawing' width='425'/>
 
-<img src='graphs/Zombie_average_rewards.png' alt='drawing' width='500'/>   <img src='graphs/Zombie_killed_mob.png' alt='drawing' width='500'/>
+<img src='graphs/Witch_average_rewards.png' alt='drawing' width='425'/>   <img src='graphs/Witch_killed_mob.png' alt='drawing' width='425'/>
 
-![text]() ![text](graphs/Zombie_killed_mob.png)
-
-![text](graphs/Skeleton_average_rewards.png) ![text](graphs/Skeleton_killed_mob.png)
-
-![text](graphs/Blaze_average_rewards.png) ![text](graphs/Blaze_killed_mob.png)
-
-![text](graphs/Ghast_average_rewards.png) ![text](graphs/Ghast_killed_mob.png)
-
-![text](graphs/Witch_average_rewards.png) ![text](graphs/Witch_killed_mob.png)
 
 - Baseline randomly choosing
 - Learning with our agent with hyperparameters
