@@ -88,9 +88,15 @@ Our episode_time denotes the amount of time that has passed in the episode. EPIS
 
 ## EVALUATION
 
-<img src="graphs/Zombie_average_rewards.png" alt="drawing" width="200"/><img src="graphs/Zombie_killed_mob.png" alt="drawing" width="200"/>
+<img src='graphs/Zombie_average_rewards.png' alt='drawing' width='500'/>   <img src='graphs/Zombie_killed_mob.png' alt='drawing' width='500'/>
 
+<img src='graphs/Zombie_average_rewards.png' alt='drawing' width='500'/>   <img src='graphs/Zombie_killed_mob.png' alt='drawing' width='500'/>
 
+<img src='graphs/Zombie_average_rewards.png' alt='drawing' width='500'/>   <img src='graphs/Zombie_killed_mob.png' alt='drawing' width='500'/>
+
+<img src='graphs/Zombie_average_rewards.png' alt='drawing' width='500'/>   <img src='graphs/Zombie_killed_mob.png' alt='drawing' width='500'/>
+
+<img src='graphs/Zombie_average_rewards.png' alt='drawing' width='500'/>   <img src='graphs/Zombie_killed_mob.png' alt='drawing' width='500'/>
 
 ![text]() ![text](graphs/Zombie_killed_mob.png)
 
