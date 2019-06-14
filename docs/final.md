@@ -51,7 +51,7 @@ After some changes we realized that our epsilon was not working as we expected. 
 Our program separates the world into weapons, distance, health and mob type. For our weapons, our agent can use the switch command to move between either a sword or a bow. We also include each of our trained mob types as a state. 
         
         WEAPONS = ['sword', 'bow']
-        HEIGHT_CHART = {'Witch':1.95, 'Skeleton':1.95, 'Zombie':1.95}
+        MOBS = {'Skeleton':1.95, 'Spider':1, 'Zombie':1.95, 'Ghast':4, 'Silverfish':0.3, 'Blaze':2, 'Witch':1.95, 'Wolf': 0.85}
 
 
 However, distance and health are near continuous and cannot be represented in a Q-Table. We solve this problem by discretizing our distance and health states. This reduces our state space significantly and therefore allows our agent to learn more quickly. We also include each of our trained mob types as a state.
@@ -64,7 +64,7 @@ For distance and health, we define the 3 different states for each state space a
         DISTANCE[0] if distance < 3 else DISTANCE[1] if distance < 6 else DISTANCE[2]
         HEALTH[0] if health < 4 else HEALTH[1] if health < 14 else HEALTH[2]
 
-Every permutation of these states is a cell in our Q-Table. We also have a list of actions that our agent can take. These actions are listed below:
+Every permutation of these states is a cell in our Q-Table. In total we have 144 states. We also have a list of actions that our agent can take. These actions are listed below:
 
         ACTIONS = {'sword': ['move 1', 'move -1', 'strafe 1', 'strafe -1', 'attack 1', 'switch'], 
                     'bow': ['move 1', 'move -1', 'strafe 1', 'strafe -1', 'use 1', 'use 0', 'switch']}
@@ -87,6 +87,8 @@ HEALTH_REWARD is set to -10, and DAMAGE_DEALTH_REWARD is set to 15. We placed mo
 Our episode_time denotes the amount of time that has passed in the episode. EPISODE_TIME_REWARD is set to -0.1 and KILL_REWARD is set to 100. Both of these rewards are implemented in order to encourage our agent to finish the mission faster by killing the enemy.
 
 ## EVALUATION
+
+![text]('../graphs/Zombie_average_rewards.png') ![text]('../graphs/Zombie_killed_mob.png')
 
 - Baseline randomly choosing
 - Learning with our agent with hyperparameters
