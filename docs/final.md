@@ -88,7 +88,11 @@ Our episode_time denotes the amount of time that has passed in the episode. EPIS
 
 ## EVALUATION
 
-![text](graphs/Zombie_average_rewards.png) ![text](graphs/Zombie_killed_mob.png)
+<img src="graphs/Zombie_average_rewards.png" alt="drawing" width="200"/><img src="graphs/Zombie_killed_mob.png" alt="drawing" width="200"/>
+
+
+
+![text]() ![text](graphs/Zombie_killed_mob.png)
 
 ![text](graphs/Skeleton_average_rewards.png) ![text](graphs/Skeleton_killed_mob.png)
 
